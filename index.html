@@ -85,6 +85,9 @@ window.STIM = {"build":"468272cea2de","items":{"IT-019":{"q":"What were business
 // leave the other behind.
 
 var T = {
+  piName: 'Minjeong Choi',
+  piAffil: 'College of Business Administration, Seoul National University',
+
   htmlLang: 'en',
   pageTitle: 'Financial disclosure judgment study',
 
@@ -95,8 +98,8 @@ var T = {
     '<div class="card">' +
     '<p><b>Study title:</b> The direction of miscalibration in AI-stated ' +
     'confidence and its effect on user reliance and trust</p>' +
-    '<p><b>Principal investigator:</b> ' + esc(PI_NAME) + ', Doctoral ' +
-    'Researcher, ' + esc(PI_AFFIL) + '</p>' +
+    '<p><b>Principal investigator:</b> ' + esc(T.piName) + ', Doctoral ' +
+    'Researcher, ' + esc(T.piAffil) + '</p>' +
     '<p>You are invited to take part in a study about <b>how people use an AI ' +
     'assistant’s stated confidence when judging figures in corporate ' +
     'financial filings.</b> You were invited because you are an adult member ' +
@@ -167,7 +170,7 @@ var T = {
     '<b>your Prolific approval rating is not affected.</b></p>' +
 
     '<h2>9. Will my information be kept confidential?</h2>' +
-    '<p>The person responsible for personal data is <b>' + esc(PI_NAME) +
+    '<p>The person responsible for personal data is <b>' + esc(T.piName) +
     ' (principal investigator)</b> at Seoul National University.</p>' +
     '<p>The personal data collected are <b>(i) your Prolific participant ID ' +
     'and (ii) your Prolific session ID</b>, collected <b>so that payment can ' +
@@ -203,7 +206,7 @@ var T = {
 
     '<h2>11. Who do I contact?</h2>' +
     '<p>For questions about the study or problems during it:<br>' +
-    esc(PI_NAME) + ' (Principal Investigator), ' + esc(PI_AFFIL) + '<br>' +
+    esc(T.piName) + ' (Principal Investigator), ' + esc(T.piAffil) + '<br>' +
     'Email: <a href="mailto:' + esc(PI_EMAIL) + '">' + esc(PI_EMAIL) +
     '</a></p>' +
     '<p>For questions about your rights as a research participant:<br>' +
@@ -399,7 +402,7 @@ var T = {
     'records.</p>' +
 
     '<h2>6. Contact</h2>' +
-    '<p>' + esc(PI_NAME) + ' (Principal Investigator), ' + esc(PI_AFFIL) +
+    '<p>' + esc(T.piName) + ' (Principal Investigator), ' + esc(T.piAffil) +
     '<br>Email: <a href="mailto:' + esc(PI_EMAIL) + '">' + esc(PI_EMAIL) +
     '</a></p>' +
     '<p>For questions about your rights as a research participant:<br>' +
@@ -467,9 +470,10 @@ var COMPLETION_URL = q('completion');
 // consent screen and again on the debrief, which is what the IRB approves; a
 // page that shows different wording from the approved documents is a protocol
 // violation on its own, so these live here rather than inline in two places.
+// The principal investigator's name and affiliation are in the language files:
+// they are written differently in Korean and in English, and the Korean consent
+// form is a Korean document, not a transliteration of the English one.
 var IRB_NUMBER = '[IRB approval number]';
-var PI_NAME    = 'Minjeong Choi';
-var PI_AFFIL   = 'College of Business Administration, Seoul National University';
 var PI_EMAIL   = 'mchoixx@snu.ac.kr';
 var IRB_PHONE  = '+82-2-880-5153';
 var IRB_EMAIL  = 'irb@snu.ac.kr';
