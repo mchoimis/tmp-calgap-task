@@ -134,35 +134,47 @@ function flash(msg) {
 }
 
 /**
- * Send one row to the endpoint.
+ * Send one row to the endpoint and confirm it landed.
  *
- * credentials:'omit' is the load-bearing part. With the visitor's Google
- * cookies attached, Apps Script redirects the request into the Workspace's
- * domain-scoped URL and a personal account is refused; without them the
- * request is the session-less one that works. mode:'no-cors' follows from
- * Apps Script sending no CORS headers - the response is opaque, so a write
- * cannot be confirmed here. Reconcile in the sheet instead.
+ * Three things were established by testing against the live deployment from
+ * the hosting origin, because each of them had been guessed wrong once:
  *
- * keepalive:true is what makes the last rows arrive. Without it the browser
- * cancels requests still in flight when the page unloads, and the participant
- * row is posted at the debrief - the moment they are most likely to close the
- * tab or follow the Prolific link. A test run recorded ten trials in the page
- * and landed two in the sheet, with no participant row at all. keepalive lets
- * the request outlive the document; the 64KB body limit is far above what a
- * row needs.
+ *   credentials:'omit'  is load-bearing. With the visitor's Google cookies
+ *     attached, Apps Script redirects into the Workspace's domain-scoped URL
+ *     and a personal account is refused - the failure that moved this page off
+ *     Apps Script in the first place. Without them the request is the
+ *     session-less one that works.
+ *
+ *   mode:'cors' works, and returns a readable 200. Apps Script sends
+ *     access-control-allow-origin on the POST, so the earlier fire-and-forget
+ *     no-cors call was giving up confirmation for nothing. A plain no-cors
+ *     POST did not even arrive: of five variants tried, it was the only one
+ *     that never reached the sheet.
+ *
+ *   keepalive:true  lets the request outlive the document. The participant row
+ *     is posted at the debrief, the moment someone closes the tab or follows
+ *     the Prolific link; without it a run recorded ten trials in the page and
+ *     landed two.
+ *
+ * Content-Type is text/plain so this stays a simple request - Apps Script
+ * cannot answer a preflight.
  */
 function post(kind, row, tries) {
   tries = tries || 0;
-  fetch(ENDPOINT, {
+  return fetch(ENDPOINT, {
     method: 'POST',
-    mode: 'no-cors',
+    mode: 'cors',
     credentials: 'omit',
     keepalive: true,
     headers: {'Content-Type': 'text/plain;charset=utf-8'},
     body: JSON.stringify({kind: kind, row: row})
-  }).catch(function () {
-    if (tries < 3) {
-      setTimeout(function () { post(kind, row, tries + 1); }, 1200 * (tries + 1));
+  }).then(function (r) {
+    return r.json();
+  }).then(function (res) {
+    if (!res || !res.ok) { throw new Error((res && res.error) || 'not saved'); }
+  }).catch(function (e) {
+    if (tries < 4) {
+      setTimeout(function () { post(kind, row, tries + 1); }, 900 * (tries + 1));
     } else {
       flash('a row could not be saved');
     }
