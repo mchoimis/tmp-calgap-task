@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Financial disclosure judgment study</title>
+</head>
+<body>
+<!-- Calibration Gap — the instrument. Served by Code.gs doGet(). -->
+<style>
+  :root {
+    --ink: #1a1a1a; --dim: #666; --line: #d8d8d8; --bg: #fbfbfa;
+    --accent: #1f4e79; --warn: #b23; --ok: #2a7;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.6 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  #wrap { max-width: 780px; margin: 0 auto; padding: 28px 20px 80px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 18px; margin: 28px 0 8px; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--dim); font-size: 14px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 8px;
+          padding: 20px; margin: 0 0 16px; }
+  .excerpt { white-space: pre-wrap; font-size: 15px; line-height: 1.7;
+             background: #fff; border: 1px solid var(--line);
+             border-left: 3px solid var(--accent); border-radius: 4px;
+             padding: 14px 16px; max-height: 420px; overflow-y: auto; }
+  .assistant { background: #f4f7fb; border: 1px solid #cfdcea;
+               border-radius: 8px; padding: 16px; }
+  .assistant .who { font-size: 13px; font-weight: 600; color: var(--accent);
+                    letter-spacing: .02em; margin-bottom: 6px; }
+  .conf { margin-top: 10px; font-style: italic; color: #33506e; }
+  button { font: inherit; padding: 10px 20px; border-radius: 6px;
+           border: 1px solid var(--accent); background: var(--accent);
+           color: #fff; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.ghost { background: #fff; color: var(--accent); }
+  input[type=number], input[type=text] { font: inherit; padding: 9px 11px;
+           border: 1px solid var(--line); border-radius: 6px; width: 190px; }
+  .units { margin-left: 8px; color: var(--dim); }
+  .err { color: var(--warn); font-size: 14px; min-height: 20px; margin-top: 6px; }
+  .bar { height: 4px; background: #e6e6e6; border-radius: 2px; overflow: hidden;
+         margin-bottom: 22px; }
+  .bar > i { display: block; height: 100%; background: var(--accent); width: 0; }
+  .scale { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .scale label { flex: 1 1 62px; text-align: center; border: 1px solid var(--line);
+                 border-radius: 6px; padding: 8px 4px; cursor: pointer;
+                 background: #fff; font-size: 14px; }
+  .scale input { display: none; }
+  .scale input:checked + span { font-weight: 700; }
+  .scale label:has(input:checked) { border-color: var(--accent);
+                 background: #eaf1f8; }
+  .ends { display: flex; justify-content: space-between; }
+  .q { margin: 18px 0 6px; font-weight: 600; }
+  .saving { position: fixed; right: 12px; bottom: 12px; font-size: 12px;
+            color: var(--dim); }
+  .hidden { display: none !important; }
+</style>
+
+<div id="wrap">
+  <div class="bar"><i id="prog"></i></div>
+  <div id="screen"></div>
+</div>
+<div class="saving" id="saving"></div>
+
+<script>
+window.STIM = {"build":"468272cea2de","items":{"IT-019":{"q":"What were business optimization and realignment costs in 2026, before tax, in millions of dollars?","x":"We incurred business optimization and realignment costs of $366 million ($285 million, net of tax, or $1.19 per diluted share) in 2026. These costs, included in Federal Express and Corporate, other, and eliminations, were primarily related to severance, professional services, and incentive payments to our contracted service providers in support of Network 2.0. We incurred business optimization and realignment costs of $756 million ($577 million, net of tax, or $2.37 per diluted share) in 2025.","u":"$ millions","co":"FedEx Corporation","fy":"2026"},"IT-009":{"q":"What was interest expense in fiscal year 2025, in billions of dollars?","x":"Interest expense in the fiscal year 2025 was $1.0 billion as compared to $0.8 billion in 2024. Cash, cash equivalents and marketable securities totaled $20.1 billion at the end of 2025, and averaged $22.3 billion as compared to the cash, cash equivalents and marketable securities total of $24.5 billion and $23.7 billion average balance in 2024. The total debt balance at the end of 2025 was $47.9 billion with an average debt balance of $42.3 billion as compared to $36.6 billion at the end of 2024 and an average debt balance of $33.0 billion.","u":"$ billions","co":"Johnson & Johnson","fy":"2025"},"IT-003":{"q":"What was cash from operations for fiscal year 2026, in billions of dollars?","x":"Cash from operations increased $46.8 billion to $182.9 billion for fiscal year 2026, primarily due to an increase in cash received from customers and a decrease in cash used to pay income taxes, offset in part by an increase in cash paid to suppliers. Cash used in investing increased $66.9 billion to $139.5 billion for fiscal year 2026, primarily due to a $51.4 billion increase in additions to property and equipment and a $22.2 billion increase in cash used in other investing primarily to facilitate the purchase of components, offset in part by a $4.2 billion decrease in cash used in the acquisition of companies, net of cash acquired and divestitures, and purchases of intangible and other assets and a $2.4 billion decrease in cash used in net investment purchases, sales, and maturities.","u":"$ billions","co":"Microsoft Corporation","fy":"2026"},"IT-017":{"q":"By how many millions of dollars did North America total net revenues increase in fiscal 2025?","x":"North America total net revenues for fiscal 2025 increased $364 million, or 1%, primarily driven by net new company-operated store growth of 4%, or 441 stores over the past 12 months ($980 million), prior to the 584 restructuring closures late in the fourth quarter of fiscal 2025. International total net revenues for fiscal 2025 increased $481 million, or 7%, primarily due to net new company-operated store growth of 5%, or 526 stores, over the past 12 months ($264 million) and the incremental net revenue from the conversion of 113 licensed stores to company-operated stores ($95 million) following the acquisition of 23.5 Degrees Topco Limited during the first quarter of fiscal 2025.","u":"$ millions","co":"Starbucks Corporation","fy":"2025"},"IT-011":{"q":"What was net debt in 2025, in billions of dollars?","x":"In 2025, net debt (cash and current marketable securities, net of debt) was $27.8 billion compared to net debt of $12.1 billion in 2024. Total debt represented 37.0% of total capital (shareholders' equity and total debt) in 2025 and 34.0% of total capital in 2024. Shareholders' equity per share at the end of 2025 was $33.86 compared to $29.70 at year-end 2024.","u":"$ billions","co":"Johnson & Johnson","fy":"2025"},"IT-015":{"q":"By how many billions of dollars did net sales for the Walmart International segment increase in fiscal 2026?","x":"Net sales for the Walmart International segment increased $8.5 billion or 7.0% and $7.2 billion or 6.3% for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. Net sales growth was primarily due to positive comparable sales growth across our international markets, which includes strong eCommerce growth of $6.3 billion and $4.7 billion for fiscal 2026 and 2025, respectively.","u":"$ billions","co":"Walmart Inc.","fy":"2026"},"IT-008":{"q":"What was interest income in fiscal year 2025, in billions of dollars?","x":"Interest income in the fiscal year 2025 was $1.1 billion as compared to $1.3 billion in 2024. Interest expense in the fiscal year 2025 was $1.0 billion as compared to $0.8 billion in 2024. Cash, cash equivalents and marketable securities totaled $20.1 billion at the end of 2025, and averaged $22.3 billion as compared to the cash, cash equivalents and marketable securities total of $24.5 billion and $23.7 billion average balance in 2024.","u":"$ billions","co":"Johnson & Johnson","fy":"2025"},"IT-002":{"q":"What was the discount rate related to the Company's lease liabilities as of September 27, 2025?","x":"The discount rate related to the Company's lease liabilities as of September 27, 2025 and September 28, 2024 was 3.4% and 3.1%, respectively. As of September 27, 2025, the Company had $523 million of fixed payment obligations under additional leases, primarily for corporate facilities and retail space, that had not yet commenced. These leases are expected to commence between 2026 and 2027, with lease terms ranging from 1 year to 21 years.","u":"%","co":"Apple Inc.","fy":"2025"},"IT-012":{"q":"What percentage of total capital did total debt represent in 2025?","x":"Total debt represented 37.0% of total capital (shareholders' equity and total debt) in 2025 and 34.0% of total capital in 2024. Shareholders' equity per share at the end of 2025 was $33.86 compared to $29.70 at year-end 2024. The Company increased its dividend in 2025 for the 63 rd consecutive year. Cash dividends paid were $5.14 per share in 2025 and $4.91 per share in 2024.","u":"%","co":"Johnson & Johnson","fy":"2025"},"IT-016":{"q":"By how many basis points did the Walmart International segment's gross profit rate decrease in fiscal 2026?","x":"Gross profit rate decreased 49 basis points for fiscal 2026 and increased 20 basis points for fiscal 2025, when compared to the previous fiscal year. For fiscal 2026, the decrease was primarily due to ongoing channel and format mix shifts, as well as strategic growth investments in price and delivery capabilities, partially offset by growth in higher margin businesses. The increase in fiscal 2025 was primarily due to improved eCommerce margin and business mix changes, partially offset by ongoing channel and format mix changes.","u":"basis points","co":"Walmart Inc.","fy":"2026"},"IT-004":{"q":"What was cash used in investing for fiscal year 2026, in billions of dollars?","x":"Cash used in investing increased $66.9 billion to $139.5 billion for fiscal year 2026, primarily due to a $51.4 billion increase in additions to property and equipment and a $22.2 billion increase in cash used in other investing primarily to facilitate the purchase of components, offset in part by a $4.2 billion decrease in cash used in the acquisition of companies, net of cash acquired and divestitures, and purchases of intangible and other assets and a $2.4 billion decrease in cash used in net investment purchases, sales, and maturities.","u":"$ billions","co":"Microsoft Corporation","fy":"2026"},"IT-013":{"q":"What was shareholders' equity per share at the end of 2025, in dollars?","x":"Shareholders' equity per share at the end of 2025 was $33.86 compared to $29.70 at year-end 2024. The Company increased its dividend in 2025 for the 63 rd consecutive year. Cash dividends paid were $5.14 per share in 2025 and $4.91 per share in 2024. On January 2, 2026, the Board of Directors declared a regular cash dividend of $1.30 per share, payable on March 10, 2026 to shareholders of record as of February 24, 2026.","u":"$","co":"Johnson & Johnson","fy":"2025"},"IT-010":{"q":"What was the total debt balance at the end of 2025, in billions of dollars?","x":"The total debt balance at the end of 2025 was $47.9 billion with an average debt balance of $42.3 billion as compared to $36.6 billion at the end of 2024 and an average debt balance of $33.0 billion. The higher debt balance was due to the senior unsecured notes issued by the Company in the fiscal first quarter of 2025.","u":"$ billions","co":"Johnson & Johnson","fy":"2025"},"IT-020":{"q":"What were business optimization and realignment costs in 2025, before tax, in millions of dollars?","x":"We incurred business optimization and realignment costs of $756 million ($577 million, net of tax, or $2.37 per diluted share) in 2025. Network 2.0 is our multi-year effort to improve the efficiency with which FedEx picks up, transports, and delivers packages in the U.S. and Canada. Through Network 2.0, we continue to consolidate our sortation facilities and equipment, reduce pickup-and-delivery routes, and optimize our enterprise linehaul network by moving beyond discrete collaboration to an end-to-end optimized network.","u":"$ millions","co":"FedEx Corporation","fy":"2026"},"IT-007":{"q":"What was the total amount of dividends received from equity method investees for the year ended December 31, 2025, in millions of dollars?","x":"The total amount of dividends received from equity method investees was $993 million, $968 million and $672 million for the years ended December 31, 2025, 2024 and 2023, respectively. The amount of consolidated reinvested earnings that represents undistributed earnings of investments accounted for under the equity method as of December 31, 2025 was $9,067 million. 1 The decrease in the Bottling Investments segment was a result of the Company's bottling operations in Africa being classified as held for sale.","u":"$ millions","co":"The Coca-Cola Company","fy":"2025"},"IT-001":{"q":"What were lease costs associated with variable payments on the Company's leases for 2025, in billions of dollars?","x":"Lease costs associated with variable payments on the Company's leases were $16.1 billion, $13.8 billion and $13.9 billion for 2025, 2024 and 2023, respectively. The Company made fixed cash payments related to operating leases of $2.1 billion in 2025 and $1.9 billion in both 2024 and 2023. Noncash activities involving right-of-use (\"ROU\") assets obtained in exchange for lease liabilities were $2.8 billion, $1.0 billion and $2.1 billion for 2025, 2024 and 2023, respectively.","u":"$ billions","co":"Apple Inc.","fy":"2025"},"IT-014":{"q":"By how many billions of dollars were net sales negatively impacted by currency exchange rate fluctuations during fiscal 2026?","x":"Net sales were negatively impacted by $2.8 billion and $3.2 billion of fluctuations in currency exchange rates during fiscal 2026 and 2025, respectively. Membership and other income increased $0.3 billion and $1.0 billion for fiscal 2026 and 2025, respectively, primarily driven by growth in membership fee revenue globally, partially offset by decreases in certain other income items, including a reduction in recycling income in fiscal 2026.","u":"$ billions","co":"Walmart Inc.","fy":"2026"},"IT-006":{"q":"What were purchases of beverage products from equity method investees in 2025, in millions of dollars?","x":"In addition, purchases of beverage products from equity method investees were $648 million, $635 million and $579 million in 2025, 2024 and 2023, respectively. Total net receivables due from equity method investees were $1,413 million and $1,357 million as of December 31, 2025 and 2024, respectively. The total amount of dividends received from equity method investees was $993 million, $968 million and $672 million for the years ended December 31, 2025, 2024 and 2023, respectively.","u":"$ millions","co":"The Coca-Cola Company","fy":"2025"},"IT-018":{"q":"How many net new company-operated stores did the North America segment add over the past 12 months?","x":"North America total net revenues for fiscal 2025 increased $364 million, or 1%, primarily driven by net new company-operated store growth of 4%, or 441 stores over the past 12 months ($980 million), prior to the 584 restructuring closures late in the fourth quarter of fiscal 2025. International total net revenues for fiscal 2025 increased $481 million, or 7%, primarily due to net new company-operated store growth of 5%, or 526 stores, over the past 12 months ($264 million) and the incremental net revenue from the conversion of 113 licensed stores to company-operated stores ($95 million) following the acquisition of 23.5 Degrees Topco Limited during the first quarter of fiscal 2025.","u":"stores","co":"Starbucks Corporation","fy":"2025"},"IT-005":{"q":"What were total payments, primarily related to marketing, made to equity method investees in 2025, in millions of dollars?","x":"Total payments, primarily related to marketing, made to equity method investees were $271 million, $331 million and $294 million in 2025, 2024 and 2023, respectively. In addition, purchases of beverage products from equity method investees were $648 million, $635 million and $579 million in 2025, 2024 and 2023, respectively. Total net receivables due from equity method investees were $1,413 million and $1,357 million as of December 31, 2025 and 2024, respectively.","u":"$ millions","co":"The Coca-Cola Company","fy":"2025"}},"trials":{"UNDER":{"1":[{"p":1,"i":"IT-019","a":"The costs were $366 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am somewhat unsure about this — roughly 53% confident."},{"p":2,"i":"IT-009","a":"Interest expense was $1 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am moderately confident in this answer — about 55% confident."},{"p":3,"i":"IT-003","a":"Cash from operations was $182.9 billion. The filing reports operating, financing and investing cash flows in consecutive sentences.","c":"I am somewhat unsure about this — roughly 50% confident."},{"p":4,"i":"IT-017","a":"North America total net revenues increased by $364 million. The filing reports North America first and International later.","c":"I am moderately confident in this answer — about 58% confident."},{"p":5,"i":"IT-011","a":"Net debt was $27.8 billion. The filing states net debt for 2025 against the prior year.","c":"I am moderately confident in this answer — about 57% confident."},{"p":6,"i":"IT-015","a":"Segment net sales increased by $8.5 billion. The filing gives the fiscal 2026 and fiscal 2025 increases in one sentence.","c":"I am somewhat unsure about this — roughly 52% confident."},{"p":7,"i":"IT-008","a":"Interest income was $1.1 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am moderately confident in this answer — about 60% confident."},{"p":8,"i":"IT-002","a":"The discount rate was 3.1%. The filing gives the rate as of September 27, 2025 and again as of September 28, 2024.","c":"I am moderately confident in this answer — about 55% confident."},{"p":9,"i":"IT-012","a":"Total debt represented 34% of total capital. The filing gives the 2025 and 2024 percentages in one sentence.","c":"I am somewhat unsure about this — roughly 50% confident."},{"p":10,"i":"IT-016","a":"The gross profit rate fell 20 basis points. The filing reports the fiscal 2026 decrease and the fiscal 2025 increase in one sentence.","c":"I am moderately confident in this answer — about 60% confident."}],"2":[{"p":1,"i":"IT-004","a":"Cash used in investing was $139.5 billion. Each sentence states the increase first and the resulting level second.","c":"I am moderately confident in this answer — about 55% confident."},{"p":2,"i":"IT-013","a":"Shareholders' equity per share was $33.86. The filing compares the end of 2025 with year-end 2024.","c":"I am moderately confident in this answer — about 58% confident."},{"p":3,"i":"IT-002","a":"The discount rate was 3.4%. The filing gives the rate as of September 27, 2025 and again as of September 28, 2024.","c":"I am somewhat unsure about this — roughly 52% confident."},{"p":4,"i":"IT-010","a":"The year-end debt balance was $47.9 billion. The same sentence also gives an average balance for the year.","c":"I am somewhat unsure about this — roughly 53% confident."},{"p":5,"i":"IT-020","a":"The costs were $756 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am somewhat unsure about this — roughly 50% confident."},{"p":6,"i":"IT-007","a":"Dividends received totalled $993 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 60% confident."},{"p":7,"i":"IT-017","a":"North America total net revenues increased by $364 million. The filing reports North America first and International later.","c":"I am moderately confident in this answer — about 57% confident."},{"p":8,"i":"IT-001","a":"Variable-payment lease costs were $13.8 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 55% confident."},{"p":9,"i":"IT-014","a":"Currency movements reduced net sales by $3.2 billion. The filing gives the fiscal 2026 and fiscal 2025 impacts in one sentence.","c":"I am somewhat unsure about this — roughly 50% confident."},{"p":10,"i":"IT-019","a":"The costs were $285 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am moderately confident in this answer — about 60% confident."}],"3":[{"p":1,"i":"IT-002","a":"The discount rate was 3.4%. The filing gives the rate as of September 27, 2025 and again as of September 28, 2024.","c":"I am somewhat unsure about this — roughly 50% confident."},{"p":2,"i":"IT-008","a":"Interest income was $1.1 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am moderately confident in this answer — about 58% confident."},{"p":3,"i":"IT-013","a":"Shareholders' equity per share was $33.86. The filing compares the end of 2025 with year-end 2024.","c":"I am somewhat unsure about this — roughly 53% confident."},{"p":4,"i":"IT-011","a":"Net debt was $27.8 billion. The filing states net debt for 2025 against the prior year.","c":"I am moderately confident in this answer — about 57% confident."},{"p":5,"i":"IT-017","a":"North America total net revenues increased by $364 million. The filing reports North America first and International later.","c":"I am moderately confident in this answer — about 60% confident."},{"p":6,"i":"IT-012","a":"Total debt represented 37% of total capital. The filing gives the 2025 and 2024 percentages in one sentence.","c":"I am somewhat unsure about this — roughly 52% confident."},{"p":7,"i":"IT-015","a":"Segment net sales increased by $8.5 billion. The filing gives the fiscal 2026 and fiscal 2025 increases in one sentence.","c":"I am moderately confident in this answer — about 55% confident."},{"p":8,"i":"IT-009","a":"Interest expense was $0.8 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am somewhat unsure about this — roughly 50% confident."},{"p":9,"i":"IT-007","a":"Dividends received totalled $672 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 60% confident."},{"p":10,"i":"IT-001","a":"Variable-payment lease costs were $13.8 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 55% confident."}],"4":[{"p":1,"i":"IT-001","a":"Variable-payment lease costs were $16.1 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 57% confident."},{"p":2,"i":"IT-003","a":"Cash from operations was $182.9 billion. The filing reports operating, financing and investing cash flows in consecutive sentences.","c":"I am somewhat unsure about this — roughly 53% confident."},{"p":3,"i":"IT-020","a":"The costs were $756 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am moderately confident in this answer — about 55% confident."},{"p":4,"i":"IT-013","a":"Shareholders' equity per share was $33.86. The filing compares the end of 2025 with year-end 2024.","c":"I am somewhat unsure about this — roughly 50% confident."},{"p":5,"i":"IT-017","a":"North America total net revenues increased by $364 million. The filing reports North America first and International later.","c":"I am moderately confident in this answer — about 58% confident."},{"p":6,"i":"IT-016","a":"The gross profit rate fell 49 basis points. The filing reports the fiscal 2026 decrease and the fiscal 2025 increase in one sentence.","c":"I am somewhat unsure about this — roughly 52% confident."},{"p":7,"i":"IT-002","a":"The discount rate was 3.4%. The filing gives the rate as of September 27, 2025 and again as of September 28, 2024.","c":"I am moderately confident in this answer — about 60% confident."},{"p":8,"i":"IT-009","a":"Interest expense was $0.8 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am moderately confident in this answer — about 55% confident."},{"p":9,"i":"IT-011","a":"Net debt was $12.1 billion. The filing states net debt for 2025 against the prior year.","c":"I am somewhat unsure about this — roughly 50% confident."},{"p":10,"i":"IT-007","a":"Dividends received totalled $672 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 60% confident."}]},"CAL":{"1":[{"p":1,"i":"IT-020","a":"The costs were $756 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am fairly confident in this answer — about 70% confident."},{"p":2,"i":"IT-001","a":"Variable-payment lease costs were $16.1 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 73% confident."},{"p":3,"i":"IT-003","a":"Cash from operations was $182.9 billion. The filing reports operating, financing and investing cash flows in consecutive sentences.","c":"I am moderately confident in this answer — about 67% confident."},{"p":4,"i":"IT-011","a":"Net debt was $27.8 billion. The filing states net debt for 2025 against the prior year.","c":"I am fairly confident in this answer — about 75% confident."},{"p":5,"i":"IT-015","a":"Segment net sales increased by $8.5 billion. The filing gives the fiscal 2026 and fiscal 2025 increases in one sentence.","c":"I am fairly confident in this answer — about 72% confident."},{"p":6,"i":"IT-009","a":"Interest expense was $1 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am moderately confident in this answer — about 68% confident."},{"p":7,"i":"IT-007","a":"Dividends received totalled $993 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 65% confident."},{"p":8,"i":"IT-012","a":"Total debt represented 34% of total capital. The filing gives the 2025 and 2024 percentages in one sentence.","c":"I am moderately confident in this answer — about 65% confident."},{"p":9,"i":"IT-008","a":"Interest income was $1.3 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am fairly confident in this answer — about 75% confident."},{"p":10,"i":"IT-006","a":"Purchases were $579 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 70% confident."}],"2":[{"p":1,"i":"IT-004","a":"Cash used in investing was $139.5 billion. Each sentence states the increase first and the resulting level second.","c":"I am moderately confident in this answer — about 68% confident."},{"p":2,"i":"IT-018","a":"North America added 441 net new company-operated stores. The filing gives a net new store count for each segment.","c":"I am moderately confident in this answer — about 65% confident."},{"p":3,"i":"IT-006","a":"Purchases were $648 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 72% confident."},{"p":4,"i":"IT-012","a":"Total debt represented 37% of total capital. The filing gives the 2025 and 2024 percentages in one sentence.","c":"I am fairly confident in this answer — about 70% confident."},{"p":5,"i":"IT-014","a":"Currency movements reduced net sales by $2.8 billion. The filing gives the fiscal 2026 and fiscal 2025 impacts in one sentence.","c":"I am moderately confident in this answer — about 67% confident."},{"p":6,"i":"IT-002","a":"The discount rate was 3.4%. The filing gives the rate as of September 27, 2025 and again as of September 28, 2024.","c":"I am fairly confident in this answer — about 75% confident."},{"p":7,"i":"IT-017","a":"North America total net revenues increased by $364 million. The filing reports North America first and International later.","c":"I am fairly confident in this answer — about 73% confident."},{"p":8,"i":"IT-015","a":"Segment net sales increased by $7.2 billion. The filing gives the fiscal 2026 and fiscal 2025 increases in one sentence.","c":"I am fairly confident in this answer — about 75% confident."},{"p":9,"i":"IT-005","a":"Total payments were $331 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 65% confident."},{"p":10,"i":"IT-001","a":"Variable-payment lease costs were $13.8 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 70% confident."}],"3":[{"p":1,"i":"IT-013","a":"Shareholders' equity per share was $33.86. The filing compares the end of 2025 with year-end 2024.","c":"I am fairly confident in this answer — about 70% confident."},{"p":2,"i":"IT-014","a":"Currency movements reduced net sales by $2.8 billion. The filing gives the fiscal 2026 and fiscal 2025 impacts in one sentence.","c":"I am moderately confident in this answer — about 67% confident."},{"p":3,"i":"IT-016","a":"The gross profit rate fell 49 basis points. The filing reports the fiscal 2026 decrease and the fiscal 2025 increase in one sentence.","c":"I am moderately confident in this answer — about 68% confident."},{"p":4,"i":"IT-019","a":"The costs were $366 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am fairly confident in this answer — about 72% confident."},{"p":5,"i":"IT-008","a":"Interest income was $1.1 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am fairly confident in this answer — about 73% confident."},{"p":6,"i":"IT-001","a":"Variable-payment lease costs were $16.1 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am moderately confident in this answer — about 65% confident."},{"p":7,"i":"IT-006","a":"Purchases were $648 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 75% confident."},{"p":8,"i":"IT-020","a":"The costs were $577 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am fairly confident in this answer — about 70% confident."},{"p":9,"i":"IT-002","a":"The discount rate was 3.1%. The filing gives the rate as of September 27, 2025 and again as of September 28, 2024.","c":"I am moderately confident in this answer — about 65% confident."},{"p":10,"i":"IT-017","a":"North America total net revenues increased by $481 million. The filing reports North America first and International later.","c":"I am fairly confident in this answer — about 75% confident."}],"4":[{"p":1,"i":"IT-006","a":"Purchases were $648 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 70% confident."},{"p":2,"i":"IT-013","a":"Shareholders' equity per share was $33.86. The filing compares the end of 2025 with year-end 2024.","c":"I am moderately confident in this answer — about 65% confident."},{"p":3,"i":"IT-015","a":"Segment net sales increased by $8.5 billion. The filing gives the fiscal 2026 and fiscal 2025 increases in one sentence.","c":"I am moderately confident in this answer — about 67% confident."},{"p":4,"i":"IT-008","a":"Interest income was $1.1 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am fairly confident in this answer — about 72% confident."},{"p":5,"i":"IT-020","a":"The costs were $756 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am fairly confident in this answer — about 73% confident."},{"p":6,"i":"IT-011","a":"Net debt was $27.8 billion. The filing states net debt for 2025 against the prior year.","c":"I am fairly confident in this answer — about 75% confident."},{"p":7,"i":"IT-004","a":"Cash used in investing was $139.5 billion. Each sentence states the increase first and the resulting level second.","c":"I am moderately confident in this answer — about 68% confident."},{"p":8,"i":"IT-009","a":"Interest expense was $0.8 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am fairly confident in this answer — about 75% confident."},{"p":9,"i":"IT-018","a":"North America added 526 net new company-operated stores. The filing gives a net new store count for each segment.","c":"I am moderately confident in this answer — about 65% confident."},{"p":10,"i":"IT-016","a":"The gross profit rate fell 20 basis points. The filing reports the fiscal 2026 decrease and the fiscal 2025 increase in one sentence.","c":"I am fairly confident in this answer — about 70% confident."}]},"OVER":{"1":[{"p":1,"i":"IT-002","a":"The discount rate was 3.4%. The filing gives the rate as of September 27, 2025 and again as of September 28, 2024.","c":"I am highly confident in this answer — about 87% confident."},{"p":2,"i":"IT-013","a":"Shareholders' equity per share was $33.86. The filing compares the end of 2025 with year-end 2024.","c":"I am highly confident in this answer — about 85% confident."},{"p":3,"i":"IT-009","a":"Interest expense was $1 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am highly confident in this answer — about 88% confident."},{"p":4,"i":"IT-020","a":"The costs were $756 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am fairly confident in this answer — about 83% confident."},{"p":5,"i":"IT-015","a":"Segment net sales increased by $8.5 billion. The filing gives the fiscal 2026 and fiscal 2025 increases in one sentence.","c":"I am fairly confident in this answer — about 82% confident."},{"p":6,"i":"IT-003","a":"Cash from operations was $182.9 billion. The filing reports operating, financing and investing cash flows in consecutive sentences.","c":"I am highly confident in this answer — about 90% confident."},{"p":7,"i":"IT-007","a":"Dividends received totalled $993 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 80% confident."},{"p":8,"i":"IT-005","a":"Total payments were $331 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am highly confident in this answer — about 85% confident."},{"p":9,"i":"IT-006","a":"Purchases were $579 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am highly confident in this answer — about 90% confident."},{"p":10,"i":"IT-001","a":"Variable-payment lease costs were $13.8 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 80% confident."}],"2":[{"p":1,"i":"IT-007","a":"Dividends received totalled $993 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am highly confident in this answer — about 87% confident."},{"p":2,"i":"IT-003","a":"Cash from operations was $182.9 billion. The filing reports operating, financing and investing cash flows in consecutive sentences.","c":"I am fairly confident in this answer — about 83% confident."},{"p":3,"i":"IT-011","a":"Net debt was $27.8 billion. The filing states net debt for 2025 against the prior year.","c":"I am highly confident in this answer — about 88% confident."},{"p":4,"i":"IT-015","a":"Segment net sales increased by $8.5 billion. The filing gives the fiscal 2026 and fiscal 2025 increases in one sentence.","c":"I am highly confident in this answer — about 85% confident."},{"p":5,"i":"IT-004","a":"Cash used in investing was $139.5 billion. Each sentence states the increase first and the resulting level second.","c":"I am fairly confident in this answer — about 80% confident."},{"p":6,"i":"IT-010","a":"The year-end debt balance was $47.9 billion. The same sentence also gives an average balance for the year.","c":"I am fairly confident in this answer — about 82% confident."},{"p":7,"i":"IT-009","a":"Interest expense was $1 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am highly confident in this answer — about 90% confident."},{"p":8,"i":"IT-006","a":"Purchases were $579 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am highly confident in this answer — about 90% confident."},{"p":9,"i":"IT-013","a":"Shareholders' equity per share was $29.7. The filing compares the end of 2025 with year-end 2024.","c":"I am fairly confident in this answer — about 80% confident."},{"p":10,"i":"IT-014","a":"Currency movements reduced net sales by $3.2 billion. The filing gives the fiscal 2026 and fiscal 2025 impacts in one sentence.","c":"I am highly confident in this answer — about 85% confident."}],"3":[{"p":1,"i":"IT-017","a":"North America total net revenues increased by $364 million. The filing reports North America first and International later.","c":"I am highly confident in this answer — about 87% confident."},{"p":2,"i":"IT-005","a":"Total payments were $271 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 80% confident."},{"p":3,"i":"IT-016","a":"The gross profit rate fell 49 basis points. The filing reports the fiscal 2026 decrease and the fiscal 2025 increase in one sentence.","c":"I am fairly confident in this answer — about 82% confident."},{"p":4,"i":"IT-003","a":"Cash from operations was $182.9 billion. The filing reports operating, financing and investing cash flows in consecutive sentences.","c":"I am highly confident in this answer — about 88% confident."},{"p":5,"i":"IT-010","a":"The year-end debt balance was $47.9 billion. The same sentence also gives an average balance for the year.","c":"I am fairly confident in this answer — about 83% confident."},{"p":6,"i":"IT-020","a":"The costs were $756 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am highly confident in this answer — about 85% confident."},{"p":7,"i":"IT-012","a":"Total debt represented 37% of total capital. The filing gives the 2025 and 2024 percentages in one sentence.","c":"I am highly confident in this answer — about 90% confident."},{"p":8,"i":"IT-008","a":"Interest income was $1.3 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am highly confident in this answer — about 85% confident."},{"p":9,"i":"IT-006","a":"Purchases were $579 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 80% confident."},{"p":10,"i":"IT-001","a":"Variable-payment lease costs were $13.8 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am highly confident in this answer — about 90% confident."}],"4":[{"p":1,"i":"IT-017","a":"North America total net revenues increased by $364 million. The filing reports North America first and International later.","c":"I am highly confident in this answer — about 88% confident."},{"p":2,"i":"IT-005","a":"Total payments were $271 million. The filing lists the figures for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 80% confident."},{"p":3,"i":"IT-020","a":"The costs were $756 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am fairly confident in this answer — about 83% confident."},{"p":4,"i":"IT-013","a":"Shareholders' equity per share was $33.86. The filing compares the end of 2025 with year-end 2024.","c":"I am highly confident in this answer — about 90% confident."},{"p":5,"i":"IT-012","a":"Total debt represented 37% of total capital. The filing gives the 2025 and 2024 percentages in one sentence.","c":"I am highly confident in this answer — about 87% confident."},{"p":6,"i":"IT-001","a":"Variable-payment lease costs were $16.1 billion. The filing reports variable-payment lease costs for 2025, 2024 and 2023 in that order.","c":"I am fairly confident in this answer — about 82% confident."},{"p":7,"i":"IT-019","a":"The costs were $366 million before tax. The filing states each year's cost before tax and then net of tax in parentheses.","c":"I am highly confident in this answer — about 85% confident."},{"p":8,"i":"IT-010","a":"The year-end debt balance was $42.3 billion. The same sentence also gives an average balance for the year.","c":"I am highly confident in this answer — about 90% confident."},{"p":9,"i":"IT-008","a":"Interest income was $1.3 billion. The filing states the fiscal 2025 figure against the prior year.","c":"I am highly confident in this answer — about 85% confident."},{"p":10,"i":"IT-018","a":"North America added 526 net new company-operated stores. The filing gives a net new store count for each segment.","c":"I am fairly confident in this answer — about 80% confident."}]}}};
+</script>
+
+<script>
+// ---- where the rows go. Replaced at build time by tools/build_task_site.py.
+var ENDPOINT = "https://script.google.com/macros/s/AKfycbzRDF52_kou6A9kx33TWUr-dqZVAyzZRDinXQs0JK6Jzu61xotZvWVwzfs3rS6lvnhx5g/exec";
+
+// ---- what the URL carries -------------------------------------------------
+// Prolific fills PROLIFIC_PID and SESSION_ID; the study link supplies cell and
+// the completion URL. This page is plain static hosting, so there is no server
+// to hand these over - they come from the query string.
+var Q = new URLSearchParams(location.search);
+function q(name, alt) {
+  return String(Q.get(name) || (alt ? Q.get(alt) : '') || '');
+}
+var CELL           = q('cell', 'CELL');
+var PROLIFIC_PID   = q('PROLIFIC_PID', 'prolific_pid');
+var STUDY_ID       = q('STUDY_ID');
+var SESSION_ID     = q('SESSION_ID');
+var COMPLETION_URL = q('completion');
+
+// ---- pre-registered instrument constants ---------------------------------
+var N_TRIALS   = 10;
+var N_PRACTICE = 2;
+// Trust is measured once, after the block. The earlier design sampled it four
+// times to recover an adjustment trajectory (H6); that hypothesis moved to a
+// second study, and with it the mid-block interruptions.
+
+// The build id is part of the key. GitHub project pages all share one origin
+// (https://<user>.github.io), so a test deployment and the real one would
+// otherwise read each other's saved progress.
+var LS_KEY = 'calgap_state_' + (window.STIM && STIM.build || 'dev');
+
+// ---- state ----------------------------------------------------------------
+var S = {
+  participant: '', cell: '', version: 0, startedAt: 0,
+  consent: '', comprehension_tries: 0,
+  practice: [], trials: [], post: {},
+  idx: 0, stage: 'consent', done: []
+};
+
+var TRIALS = [], PRACTICE = [];
+
+// ---- helpers --------------------------------------------------------------
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, function (c) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; });
+}
+function uid() {
+  return 'P' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {}
+}
+function load() {
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function progress(f) { $('prog').style.width = Math.round(f * 100) + '%'; }
+function flash(msg) {
+  $('saving').textContent = msg;
+  if (msg) setTimeout(function () { $('saving').textContent = ''; }, 2500);
+}
+
+/**
+ * Send one row to the endpoint.
+ *
+ * credentials:'omit' is the load-bearing part. With the visitor's Google
+ * cookies attached, Apps Script redirects the request into the Workspace's
+ * domain-scoped URL and a personal account is refused; without them the
+ * request is the session-less one that works. mode:'no-cors' follows from
+ * Apps Script sending no CORS headers - the response is opaque, so a write
+ * cannot be confirmed here. Reconcile in the sheet instead.
+ */
+function post(kind, row, tries) {
+  tries = tries || 0;
+  fetch(ENDPOINT, {
+    method: 'POST',
+    mode: 'no-cors',
+    credentials: 'omit',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify({kind: kind, row: row})
+  }).catch(function () {
+    if (tries < 3) {
+      setTimeout(function () { post(kind, row, tries + 1); }, 1200 * (tries + 1));
+    } else {
+      flash('a row could not be saved');
+    }
+  });
+}
+
+/** Losing a row is better than stranding a participant on a dead screen. */
+function postTrial(row) { post('trial', row); }
+
+function postPerson(done) {
+  var row = {
+    participant: S.participant, prolific_pid: PROLIFIC_PID,
+    session: SESSION_ID, cell: S.cell, version: S.version,
+    user_agent: navigator.userAgent, consent: S.consent,
+    comprehension_tries: S.comprehension_tries,
+    total_seconds: Math.round((Date.now() - S.startedAt) / 1000),
+    debrief_seen: done ? 'yes' : 'no'
+  };
+  S.practice.forEach(function (p, i) {
+    row['practice_' + (i + 1) + '_item'] = p.item_id;
+    row['practice_' + (i + 1) + '_answer'] = p.answer;
+  });
+  ['trust', 'distrust', 'verify_intent', 'perceived_accuracy',
+   'perceived_confidence',
+   'numeracy', 'ai_familiarity', 'attention_check'].forEach(function (k) {
+    row[k] = S.post[k];
+  });
+  post('person', row);
+}
+
+// ---- condition assignment -------------------------------------------------
+function assign() {
+  var cells = Object.keys(STIM.trials);
+  S.build = STIM.build;
+  S.cell = (CELL && STIM.trials[CELL]) ? CELL : cells[Math.floor(Math.random() * cells.length)];
+  var versions = Object.keys(STIM.trials[S.cell]);
+  S.version = parseInt(versions[Math.floor(Math.random() * versions.length)], 10);
+}
+
+function materialise() {
+  var byVersion = STIM.trials[S.cell];
+  var set = byVersion && byVersion[String(S.version)];
+  if (!set) {
+    throw new Error('no stimuli for ' + S.cell + ' v' + S.version);
+  }
+  TRIALS = set.slice().sort(function (a, b) { return a.p - b.p; });
+  var used = {};
+  TRIALS.forEach(function (t) { used[t.i] = 1; });
+  PRACTICE = Object.keys(STIM.items).filter(function (k) { return !used[k]; })
+                   .sort().slice(0, N_PRACTICE);
+}
+
+// ---- scale rendering ------------------------------------------------------
+function scale(name, lo, hi, n) {
+  var out = '<div class="scale">';
+  for (var i = 1; i <= n; i++) {
+    out += '<label><input type="radio" name="' + name + '" value="' + i + '">' +
+           '<span>' + i + '</span></label>';
+  }
+  out += '</div><div class="ends muted"><span>' + esc(lo) + '</span><span>' +
+         esc(hi) + '</span></div>';
+  return out;
+}
+function picked(name) {
+  var el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+
+// ===========================================================================
+// SCREENS
+// ===========================================================================
+function show(html) { $('screen').innerHTML = html; window.scrollTo(0, 0); }
+
+function screenConsent() {
+  progress(0.02);
+  show(
+    '<h1>Research participation — information and consent</h1>' +
+    '<div class="card">' +
+    '<p>You are invited to take part in a study about how people use an ' +
+    'AI assistant when judging figures in corporate financial filings.</p>' +
+    '<h2>What you will do</h2>' +
+    '<p>You will read short excerpts from annual reports and answer a numeric ' +
+    'question about each one. For most items an AI assistant will offer an ' +
+    'answer together with a statement of how confident it is. You decide what ' +
+    'to submit. The task takes about 10 minutes.</p>' +
+    '<h2>Risks, payment, and withdrawal</h2>' +
+    '<p>There are no anticipated risks beyond those of ordinary computer use. ' +
+    'You are paid the rate stated in the study advertisement. You may stop at ' +
+    'any time by closing the window.</p>' +
+    '<h2>Your data</h2>' +
+    '<p>We record your answers, the time you spend on each screen, and whether ' +
+    'you re-open the source text. We do not collect your name. Your Prolific ID ' +
+    'is stored so that payment can be released and is not published. Anonymised ' +
+    'data may be shared for verification.</p>' +
+    '<p class="muted">[IRB approval number] &nbsp;·&nbsp; [Principal investigator, ' +
+    'contact address]</p>' +
+    '</div>' +
+    '<button id="yes">I have read this and agree to take part</button> ' +
+    '<button class="ghost" id="no">I do not wish to take part</button>');
+  $('yes').onclick = function () {
+    S.consent = 'yes'; S.stage = 'instructions'; save(); screenInstructions();
+  };
+  $('no').onclick = function () {
+    S.consent = 'no'; save(); postPerson(false);
+    show('<div class="card"><p>Thank you. You may close this window and return ' +
+         'the study on Prolific.</p></div>');
+  };
+}
+
+function screenInstructions() {
+  progress(0.06);
+  show(
+    '<h1>Instructions</h1>' +
+    '<div class="card">' +
+    '<p>Each item shows an excerpt from a company’s annual report and asks ' +
+    'for a number.</p>' +
+    '<p><b>Every item has two steps.</b></p>' +
+    '<p>1. You read the excerpt and give your own answer.<br>' +
+    '2. You then see an AI assistant’s answer and how confident it says it ' +
+    'is, and you give your final answer. Your final answer is the one that ' +
+    'counts.</p>' +
+    '<p>At step 2 the excerpt is collapsed to save space. <b>You can re-open it ' +
+    'at any time</b> with the button, and you should whenever you want to check ' +
+    'something.</p>' +
+    '<p>The assistant is not always right. How often it is right, and how ' +
+    'confident it sounds, are not the same thing.</p>' +
+    '<p><b>You do not need to calculate anything.</b> Every answer is a ' +
+    'number printed in the excerpt. The work is finding the right one: each ' +
+    'excerpt states several similar figures — the same item for different ' +
+    'years, two different segments, or an amount before and after tax — so ' +
+    'read carefully what the question asks for.</p>' +
+    '<p>Please do not use a spreadsheet, a search engine, or another AI tool. ' +
+    'We are studying your own judgment.</p>' +
+    '</div>' +
+    '<div class="card">' +
+    '<p class="q">Before you start: which of these is true?</p>' +
+    '<div class="scale" style="flex-direction:column">' +
+    '<label><input type="radio" name="comp" value="a"><span>The assistant is ' +
+    'always correct, so I should copy its answer.</span></label>' +
+    '<label><input type="radio" name="comp" value="b"><span>The assistant is ' +
+    'sometimes wrong, and my final answer is what counts.</span></label>' +
+    '<label><input type="radio" name="comp" value="c"><span>I have to ' +
+    'calculate the answer myself.</span></label>' +
+    '</div>' +
+    '<div class="err" id="e"></div>' +
+    '</div>' +
+    '<button id="go">Continue</button>');
+  $('go').onclick = function () {
+    var v = picked('comp');
+    if (!v) { $('e').textContent = 'Please choose one.'; return; }
+    S.comprehension_tries++;
+    if (v !== 'b') {
+      $('e').textContent = 'Not quite — please read the instructions again and retry.';
+      save(); return;
+    }
+    S.stage = 'practice'; S.idx = 0; save(); screenPractice();
+  };
+}
+
+function screenPractice() {
+  if (S.idx >= PRACTICE.length) {
+    S.stage = 'trials'; S.idx = 0; save(); return screenTrial();
+  }
+  progress(0.08 + 0.04 * S.idx);
+  var it = STIM.items[PRACTICE[S.idx]];
+  var t0 = Date.now();
+  show(
+    '<h1>Practice ' + (S.idx + 1) + ' of ' + PRACTICE.length + '</h1>' +
+    '<p class="muted">No assistant on practice items. Find the figure the ' +
+    'question asks for.</p>' +
+    '<div class="card"><div class="muted">' + esc(it.co) + ' · FY' +
+    esc(it.fy) + '</div><div class="excerpt">' + esc(it.x) + '</div>' +
+    '<p class="q">' + esc(it.q) + '</p>' +
+    '<input type="number" step="any" id="ans" autocomplete="off">' +
+    '<span class="units">' + esc(it.u) + '</span>' +
+    '<div class="err" id="e"></div></div>' +
+    '<button id="go">Submit</button>');
+  $('ans').focus();
+  $('go').onclick = function () {
+    var v = $('ans').value.trim();
+    if (v === '' || isNaN(Number(v))) {
+      $('e').textContent = 'Please enter a number.'; return;
+    }
+    S.practice.push({item_id: PRACTICE[S.idx], answer: Number(v),
+                     seconds: Math.round((Date.now() - t0) / 1000)});
+    S.idx++; save(); screenPractice();
+  };
+}
+
+// ---- the trial ------------------------------------------------------------
+function screenTrial() {
+  if (S.idx >= N_TRIALS) { S.stage = 'post'; save(); return screenPost(); }
+  var t = TRIALS[S.idx], it = STIM.items[t.i];
+  var n = S.idx + 1;
+  progress(0.16 + 0.62 * (S.idx / N_TRIALS));
+
+  var t0 = Date.now();
+  show(
+    '<h1>Item ' + n + ' of ' + N_TRIALS + '</h1>' +
+    '<div class="card"><div class="muted">' + esc(it.co) + ' · FY' +
+    esc(it.fy) + '</div><div class="excerpt">' + esc(it.x) + '</div>' +
+    '<p class="q">' + esc(it.q) + '</p>' +
+    '<input type="number" step="any" id="ans" autocomplete="off">' +
+    '<span class="units">' + esc(it.u) + '</span>' +
+    '<div class="err" id="e"></div></div>' +
+    '<button id="go">Submit my answer</button>');
+  $('ans').focus();
+  $('go').onclick = function () {
+    var v = $('ans').value.trim();
+    if (v === '' || isNaN(Number(v))) {
+      $('e').textContent = 'Please enter a number.'; return;
+    }
+    stage2(t, it, n, Number(v), Math.round((Date.now() - t0) / 1000));
+  };
+}
+
+function stage2(t, it, n, initial, t1) {
+  var t0 = Date.now(), reopenCount = 0, reopenMs = 0, openedAt = 0;
+  progress(0.16 + 0.62 * ((S.idx + 0.5) / N_TRIALS));
+  show(
+    '<h1>Item ' + n + ' of ' + N_TRIALS + '</h1>' +
+    '<div class="card">' +
+    '<p class="q">' + esc(it.q) + '</p>' +
+    '<p class="muted">Your answer: <b>' + esc(initial) + '</b> ' + esc(it.u) + '</p>' +
+    '<button class="ghost" id="toggle">Show the excerpt again</button>' +
+    '<div id="src" class="excerpt hidden" style="margin-top:12px">' +
+    esc(it.x) + '</div>' +
+    '</div>' +
+    '<div class="card assistant">' +
+    '<div class="who">AI ASSISTANT</div>' +
+    '<div>' + esc(t.a) + '</div>' +
+    '<div class="conf">' + esc(t.c) + '</div>' +
+    '</div>' +
+    '<div class="card">' +
+    '<p class="q">Your final answer</p>' +
+    '<input type="number" step="any" id="fin" autocomplete="off" value="' +
+    esc(initial) + '">' +
+    '<span class="units">' + esc(it.u) + '</span>' +
+    '<div class="err" id="e"></div></div>' +
+    '<button id="go">Submit final answer</button>');
+
+  $('toggle').onclick = function () {
+    var box = $('src');
+    if (box.classList.contains('hidden')) {
+      box.classList.remove('hidden');
+      reopenCount++; openedAt = Date.now();
+      this.textContent = 'Hide the excerpt';
+    } else {
+      box.classList.add('hidden');
+      if (openedAt) { reopenMs += Date.now() - openedAt; openedAt = 0; }
+      this.textContent = 'Show the excerpt again';
+    }
+  };
+
+  $('go').onclick = function () {
+    var v = $('fin').value.trim();
+    if (v === '' || isNaN(Number(v))) {
+      $('e').textContent = 'Please enter a number.'; return;
+    }
+    if (openedAt) { reopenMs += Date.now() - openedAt; openedAt = 0; }
+    var row = {
+      participant: S.participant, prolific_pid: PROLIFIC_PID,
+      session: SESSION_ID, cell: S.cell, version: S.version,
+      position: t.p, item_id: t.i,
+      initial_estimate: initial, final_estimate: Number(v),
+      t_stage1: t1, t_stage2: Math.round((Date.now() - t0) / 1000),
+      reopen_count: reopenCount, reopen_ms: reopenMs
+    };
+    S.trials.push(row);
+    postTrial(row);
+    S.idx++; save();
+    screenTrial();
+  };
+}
+
+function screenPost() {
+  progress(0.84);
+  show(
+    '<h1>A few final questions</h1>' +
+    '<div class="card">' +
+    '<p class="q">Overall, how much did you trust the assistant?</p>' +
+    scale('trust', 'not at all', 'completely', 7) +
+    '<p class="q">Overall, how much did you suspect the assistant of claiming ' +
+    'more certainty than it had?</p>' +
+    scale('distrust', 'not at all', 'extremely', 7) +
+    '<p class="q">Overall, how closely did you check the excerpt yourself ' +
+    'rather than take the assistant\u2019s answer?</p>' +
+    scale('verify', 'not at all', 'very closely', 7) +
+    '</div>' +
+    '<div class="card">' +
+    '<p class="q">Out of 100 items like these, how many do you think the ' +
+    'assistant answered correctly?</p>' +
+    '<input type="number" id="pa" min="0" max="100" step="1"><span class="units">of 100</span>' +
+    '<p class="q">On average, how confident did the assistant <i>say</i> it was?</p>' +
+    '<input type="number" id="pc" min="0" max="100" step="1"><span class="units">%</span>' +
+    '</div>' +
+    '<div class="card">' +
+    '<p class="q">A bag has 1,000 marbles, of which 10 are red. If you draw ' +
+    'one at random, what is the chance it is red?</p>' +
+    '<input type="number" id="num" step="any"><span class="units">%</span>' +
+    '<p class="q">How often do you use AI assistants such as ChatGPT or Claude?</p>' +
+    scale('fam', 'never', 'daily', 5) +
+    '<p class="q">To show you are reading, please select the third option.</p>' +
+    scale('att', 'first', 'fifth', 5) +
+    '<div class="err" id="e"></div></div>' +
+    '<button id="go">Continue</button>');
+  $('go').onclick = function () {
+    var pa = $('pa').value.trim(), pc = $('pc').value.trim(),
+        num = $('num').value.trim();
+    var t = picked('trust'), d = picked('distrust'), v = picked('verify'),
+        f = picked('fam'), a = picked('att');
+    if (!t || !d || !v || !f || !a || pa === '' || pc === '' || num === '') {
+      $('e').textContent = 'Please answer every question.'; return;
+    }
+    S.post = {trust: t, distrust: d, verify_intent: v,
+              perceived_accuracy: Number(pa),
+              perceived_confidence: Number(pc), numeracy: Number(num),
+              ai_familiarity: f, attention_check: a};
+    S.stage = 'debrief'; save(); screenDebrief();
+  };
+}
+
+function screenDebrief() {
+  progress(1);
+  postPerson(true);
+  var code = COMPLETION_URL;
+  show(
+    '<h1>Debriefing</h1>' +
+    '<div class="card">' +
+    '<p>Thank you. Now that you have finished, we can tell you what the study ' +
+    'was really about.</p>' +
+    '<p><b>The assistant’s answers were prepared in advance.</b> How often ' +
+    'it was correct, and how confident it said it was, were set by the ' +
+    'researchers rather than produced by a live system. Some of its answers ' +
+    'were deliberately incorrect, and its stated confidence did not always ' +
+    'match how often it was right.</p>' +
+    '<p>We did not tell you this beforehand because knowing it would have ' +
+    'changed exactly the behaviour we set out to measure — how much people ' +
+    'rely on an assistant that sounds more, or less, confident than it should. ' +
+    'Nothing you did was assessed, and there were no correct or incorrect ways ' +
+    'to respond.</p>' +
+    '<p>If you would prefer your data not to be used now that you know this, ' +
+    'contact us at the address below and it will be deleted.</p>' +
+    '<p class="muted">[Principal investigator, contact address] &nbsp;·&nbsp; ' +
+    '[IRB approval number]</p>' +
+    '</div>' +
+    '<div class="card"><p>Your responses have been recorded.</p>' +
+    (code
+      ? '<p><a href="' + esc(code) + '">Click here to return to Prolific and ' +
+        'complete the study.</a></p>'
+      : '<p class="muted">You may now close this window.</p>') +
+    '</div>');
+  try { localStorage.removeItem(LS_KEY); } catch (e) {}
+}
+
+// ---- boot -----------------------------------------------------------------
+function boot() {
+  var prev = load();
+  // Only resume a run from this same build. Stimuli change between versions,
+  // and a saved run naming a condition that no longer exists would otherwise
+  // throw here and leave the participant looking at an empty page.
+  var resumable = prev && prev.participant && prev.stage !== 'debrief' &&
+                  prev.build === STIM.build &&
+                  (!PROLIFIC_PID || prev.prolific_pid === PROLIFIC_PID);
+  if (resumable) {
+    S = prev;
+    try {
+      materialise();
+    } catch (e) {
+      resumable = false;
+    }
+  }
+  if (!resumable) {
+    try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  }
+  if (resumable) {
+    show('<h1>Welcome back</h1><div class="card"><p>You left partway through. ' +
+         'You can carry on from where you stopped.</p></div>' +
+         '<button id="resume">Continue</button> ' +
+         '<button class="ghost" id="restart">Start again</button>');
+    $('resume').onclick = function () {
+      ({consent: screenConsent, instructions: screenInstructions,
+        practice: screenPractice, trials: screenTrial,
+        post: screenPost, debrief: screenDebrief}[S.stage] || screenConsent)();
+    };
+    $('restart').onclick = function () {
+      try { localStorage.removeItem(LS_KEY); } catch (e) {}
+      location.reload();
+    };
+    return;
+  }
+  S.participant = uid();
+  S.prolific_pid = PROLIFIC_PID;
+  S.startedAt = Date.now();
+  assign();
+  materialise();
+  save();
+  screenConsent();
+}
+
+// A page that renders nothing is indistinguishable from a broken link. If boot
+// fails for any reason, say so on screen rather than leaving a blank page.
+function safeBoot() {
+  try {
+    boot();
+  } catch (e) {
+    try { localStorage.removeItem(LS_KEY); } catch (e2) {}
+    show('<h1>Something went wrong starting the study</h1>' +
+         '<div class="card"><p>Please reload this page. If it happens again, ' +
+         'return the study on Prolific and contact the researcher.</p>' +
+         '<p class="muted">' + esc(String(e && e.message || e)) + '</p></div>');
+  }
+}
+
+window.addEventListener('beforeunload', function () {
+  if (S.stage === 'trials' && S.trials.length) { try { save(); } catch (e) {} }
+});
+
+safeBoot();
+</script>
+
+</body>
+</html>
