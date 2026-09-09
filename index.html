@@ -53,6 +53,8 @@
   .scale label:has(input:checked) { border-color: var(--accent);
                  background: #eaf1f8; }
   .ends { display: flex; justify-content: space-between; }
+  .pns { display: inline-flex; align-items: center; gap: 6px; margin-left: 14px;
+         color: var(--dim); cursor: pointer; }
   /* Named options rather than a numbered scale: same look, but the labels
      are words, so let each one take the width its word needs. */
   .choices { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 4px; }
@@ -191,8 +193,8 @@ var T = {
     'to Prolific and do not let us learn your name, email, or contact ' +
     'details. Age and gender are collected <b>only to describe the group of ' +
     'people who took part</b> and are reported as group figures, never ' +
-    'individually. <b>You may leave the age question blank and may choose ' +
-    '“prefer not to say” for gender; either choice has no effect on your ' +
+    'individually. <b>Each of these two questions offers ' +
+    '“prefer not to say”, and choosing it has no effect on your ' +
     'payment or on anything else.</b> <b>We do not collect your name, ' +
     'email address, telephone number, address, date of birth, or IP ' +
     'address.</b></p>' +
@@ -355,17 +357,18 @@ var T = {
     '<p class="q">How old are you?</p>' +
     '<input type="number" id="age" min="18" max="99" step="1">' +
     '<span class="units">years</span>' +
-    '<p class="muted">You may leave this blank if you would rather not say.</p>' +
+    '<label class="pns"><input type="checkbox" id="age_pns">' +
+    '<span>Prefer not to say</span></label>' +
     '<p class="q">What is your gender?</p>' +
     choices('gender', [['female', 'Woman'], ['male', 'Man'],
                        ['other', 'Another gender'],
-                       ['declined', 'Prefer not to say']]) +
+                       [DECLINED, 'Prefer not to say']]) +
     '<div class="err" id="e"></div></div>' +
     '<button id="go">Continue</button>'
     );
   },
   errAnswerAll: 'Please answer every question.',
-  errAge: 'Please enter an age between 18 and 99, or leave the box empty.',
+  errAge: 'Please enter an age between 18 and 99, or tick “Prefer not to say”.',
   btnContinue: 'Continue',
 
   // ---- debrief ------------------------------------------------------------
@@ -673,6 +676,10 @@ function scale(name, lo, hi, n) {
          esc(hi) + '</span></div>';
   return out;
 }
+// The one value that means "asked, and chose not to answer". Kept identical
+// across languages and across both demographic items.
+var DECLINED = 'prefer_not_to_say';
+
 function choices(name, opts) {
   var out = '<div class="choices">';
   for (var i = 0; i < opts.length; i++) {
@@ -845,6 +852,12 @@ function screenPost() {
   progress(0.84);
   show(
     T.postBody());
+  // Ticking the box clears and disables the number, so a participant cannot
+  // submit an age and a refusal at the same time.
+  $('age_pns').onchange = function () {
+    $('age').disabled = this.checked;
+    if (this.checked) { $('age').value = ''; }
+  };
   $('go').onclick = function () {
     var pa = $('pa').value.trim(), pc = $('pc').value.trim(),
         num = $('num').value.trim(), age = $('age').value.trim();
@@ -853,17 +866,20 @@ function screenPost() {
     if (!t || !d || !v || !f || !a || !g || pa === '' || pc === '' || num === '') {
       $('e').textContent = T.errAnswerAll; return;
     }
-    // Age is the one item a participant may leave blank; '' means declined,
-    // which is not the same as a missing row. Gender carries its own
-    // decline option, so it is required like the rest.
-    if (age !== '' && (isNaN(Number(age)) || Number(age) < 18 || Number(age) > 99)) {
+    // Declining age is a recorded answer, not an empty cell: a blank could not
+    // be told apart from a row that failed to write. Both this and gender
+    // store the same code, so one filter finds every refusal.
+    var ageDeclined = $('age_pns').checked;
+    if (!ageDeclined &&
+        (age === '' || isNaN(Number(age)) ||
+         Number(age) < 18 || Number(age) > 99)) {
       $('e').textContent = T.errAge; return;
     }
     S.post = {trust: t, distrust: d, verify_intent: v,
               perceived_accuracy: Number(pa),
               perceived_confidence: Number(pc), numeracy: Number(num),
               ai_familiarity: f, attention_check: a,
-              age: age === '' ? '' : Number(age), gender: g};
+              age: ageDeclined ? DECLINED : Number(age), gender: g};
     S.stage = 'debrief'; save(); screenDebrief();
   };
 }
