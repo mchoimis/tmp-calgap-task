@@ -53,6 +53,16 @@
   .scale label:has(input:checked) { border-color: var(--accent);
                  background: #eaf1f8; }
   .ends { display: flex; justify-content: space-between; }
+  /* Named options rather than a numbered scale: same look, but the labels
+     are words, so let each one take the width its word needs. */
+  .choices { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .choices .choice { flex: 0 1 auto; text-align: center; border: 1px solid var(--line);
+                 border-radius: 6px; padding: 8px 14px; cursor: pointer;
+                 background: #fff; font-size: 14px; }
+  .choices input { display: none; }
+  .choices input:checked + span { font-weight: 700; }
+  .choices .choice:has(input:checked) { border-color: var(--accent);
+                 background: #eaf1f8; }
   .q { margin: 18px 0 6px; font-weight: 600; }
   .saving { position: fixed; right: 12px; bottom: 12px; font-size: 12px;
             color: var(--dim); }
@@ -129,11 +139,12 @@ var T = {
     '<b>final answer</b>. The excerpt is collapsed but you can re-open it at ' +
     'any time with one button. No calculation is required — every answer ' +
     'is a number printed in the excerpt.<br>' +
-    '4) After the ten items you answer <b>8 short closing questions</b>: ' +
+    '4) After the ten items you answer <b>10 short closing questions</b>: ' +
     'how much you trusted the ' +
     'assistant, whether you suspected it of claiming more certainty than it ' +
     'had, how closely you checked the excerpt, how many items you think it got ' +
-    'right, one probability question, and how often you use AI assistants.<br>' +
+    'right, one probability question, how often you use AI assistants, and ' +
+    '<b>your age and gender</b>.<br>' +
     '5) A <b>final page explaining more about the study</b> is shown. Please ' +
     'read it.</p>' +
     '<p>We record your answers, the time you spend on each screen, and how ' +
@@ -173,11 +184,16 @@ var T = {
     '<h2>9. Will my information be kept confidential?</h2>' +
     '<p>The person responsible for personal data is <b>' + esc(T.piName) +
     ' (principal investigator)</b> at Seoul National University.</p>' +
-    '<p>The personal data collected are <b>(i) your Prolific participant ID ' +
-    'and (ii) your Prolific session ID</b>, collected <b>so that payment can ' +
-    'be released and so that nobody takes part twice.</b> These are ' +
-    'pseudonymous identifiers internal to Prolific; they do not let us learn ' +
-    'your name, email, or contact details. <b>We do not collect your name, ' +
+    '<p>The personal data collected are <b>(i) your Prolific participant ID, ' +
+    '(ii) your Prolific session ID, and (iii) your age and gender</b>. The ' +
+    'first two are collected <b>so that payment can be released and so that ' +
+    'nobody takes part twice</b>; they are pseudonymous identifiers internal ' +
+    'to Prolific and do not let us learn your name, email, or contact ' +
+    'details. Age and gender are collected <b>only to describe the group of ' +
+    'people who took part</b> and are reported as group figures, never ' +
+    'individually. <b>You may leave the age question blank and may choose ' +
+    '“prefer not to say” for gender; either choice has no effect on your ' +
+    'payment or on anything else.</b> <b>We do not collect your name, ' +
     'email address, telephone number, address, date of birth, or IP ' +
     'address.</b></p>' +
     '<p>These data are accessible only to the principal investigator and the ' +
@@ -334,11 +350,22 @@ var T = {
     scale('fam', 'never', 'daily', 5) +
     '<p class="q">To show you are reading, please select the third option.</p>' +
     scale('att', 'first', 'fifth', 5) +
+    '</div>' +
+    '<div class="card">' +
+    '<p class="q">How old are you?</p>' +
+    '<input type="number" id="age" min="18" max="99" step="1">' +
+    '<span class="units">years</span>' +
+    '<p class="muted">You may leave this blank if you would rather not say.</p>' +
+    '<p class="q">What is your gender?</p>' +
+    choices('gender', [['female', 'Woman'], ['male', 'Man'],
+                       ['other', 'Another gender'],
+                       ['declined', 'Prefer not to say']]) +
     '<div class="err" id="e"></div></div>' +
     '<button id="go">Continue</button>'
     );
   },
   errAnswerAll: 'Please answer every question.',
+  errAge: 'Please enter an age between 18 and 99, or leave the box empty.',
   btnContinue: 'Continue',
 
   // ---- debrief ------------------------------------------------------------
@@ -606,7 +633,8 @@ function postPerson(done) {
   });
   ['trust', 'distrust', 'verify_intent', 'perceived_accuracy',
    'perceived_confidence',
-   'numeracy', 'ai_familiarity', 'attention_check'].forEach(function (k) {
+   'numeracy', 'ai_familiarity', 'attention_check',
+   'age', 'gender'].forEach(function (k) {
     row[k] = S.post[k];
   });
   post('person', row);
@@ -644,6 +672,15 @@ function scale(name, lo, hi, n) {
   out += '</div><div class="ends muted"><span>' + esc(lo) + '</span><span>' +
          esc(hi) + '</span></div>';
   return out;
+}
+function choices(name, opts) {
+  var out = '<div class="choices">';
+  for (var i = 0; i < opts.length; i++) {
+    out += '<label class="choice"><input type="radio" name="' + name +
+           '" value="' + opts[i][0] + '"><span>' + esc(opts[i][1]) +
+           '</span></label>';
+  }
+  return out + '</div>';
 }
 function picked(name) {
   var el = document.querySelector('input[name="' + name + '"]:checked');
@@ -810,16 +847,23 @@ function screenPost() {
     T.postBody());
   $('go').onclick = function () {
     var pa = $('pa').value.trim(), pc = $('pc').value.trim(),
-        num = $('num').value.trim();
+        num = $('num').value.trim(), age = $('age').value.trim();
     var t = picked('trust'), d = picked('distrust'), v = picked('verify'),
-        f = picked('fam'), a = picked('att');
-    if (!t || !d || !v || !f || !a || pa === '' || pc === '' || num === '') {
+        f = picked('fam'), a = picked('att'), g = picked('gender');
+    if (!t || !d || !v || !f || !a || !g || pa === '' || pc === '' || num === '') {
       $('e').textContent = T.errAnswerAll; return;
+    }
+    // Age is the one item a participant may leave blank; '' means declined,
+    // which is not the same as a missing row. Gender carries its own
+    // decline option, so it is required like the rest.
+    if (age !== '' && (isNaN(Number(age)) || Number(age) < 18 || Number(age) > 99)) {
+      $('e').textContent = T.errAge; return;
     }
     S.post = {trust: t, distrust: d, verify_intent: v,
               perceived_accuracy: Number(pa),
               perceived_confidence: Number(pc), numeracy: Number(num),
-              ai_familiarity: f, attention_check: a};
+              ai_familiarity: f, attention_check: a,
+              age: age === '' ? '' : Number(age), gender: g};
     S.stage = 'debrief'; save(); screenDebrief();
   };
 }

@@ -53,6 +53,16 @@
   .scale label:has(input:checked) { border-color: var(--accent);
                  background: #eaf1f8; }
   .ends { display: flex; justify-content: space-between; }
+  /* Named options rather than a numbered scale: same look, but the labels
+     are words, so let each one take the width its word needs. */
+  .choices { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .choices .choice { flex: 0 1 auto; text-align: center; border: 1px solid var(--line);
+                 border-radius: 6px; padding: 8px 14px; cursor: pointer;
+                 background: #fff; font-size: 14px; }
+  .choices input { display: none; }
+  .choices input:checked + span { font-weight: 700; }
+  .choices .choice:has(input:checked) { border-color: var(--accent);
+                 background: #eaf1f8; }
   .q { margin: 18px 0 6px; font-weight: 600; }
   .saving { position: fixed; right: 12px; bottom: 12px; font-size: 12px;
             color: var(--dim); }
@@ -122,10 +132,11 @@ var T = {
     '어시스턴트가 얼마나 확신하는지에 대한 문장</b>을 보고 <b>최종 답</b>을 적습니다. ' +
     '발췌문은 접혀 있지만 버튼 하나로 언제든 다시 펼 수 있습니다. ' +
     '<b>계산은 필요 없습니다</b> — 모든 답은 발췌문에 적혀 있는 숫자입니다.<br>' +
-    '4) 본 문항 10개가 끝난 뒤 <b>마무리 질문 8개</b>에 답합니다: ' +
+    '4) 본 문항 10개가 끝난 뒤 <b>마무리 질문 10개</b>에 답합니다: ' +
     '어시스턴트를 얼마나 신뢰했는지, 어시스턴트가 실제보다 ' +
     '더 확신하는 척한다고 의심했는지, 발췌문을 얼마나 직접 확인했는지, 어시스턴트가 몇 ' +
-    '문항을 맞혔다고 생각하는지, 확률 문제 1개, AI 어시스턴트를 얼마나 자주 쓰는지.<br>' +
+    '문항을 맞혔다고 생각하는지, 확률 문제 1개, AI 어시스턴트를 얼마나 자주 쓰는지, ' +
+    '그리고 <b>연령과 성별</b>.<br>' +
     '5) <b>연구에 대해 더 설명하는 마지막 페이지</b>가 나옵니다. 꼭 읽어주십시오.</p>' +
     '<p>귀하의 답변, 각 화면에 머문 시간, 발췌문을 다시 편 횟수와 시간이 ' +
     '기록됩니다.</p>' +
@@ -159,10 +170,14 @@ var T = {
     '<h2>9. 제 정보는 비밀로 유지되나요?</h2>' +
     '<p>개인정보 관리 책임자는 서울대학교 <b>' + esc(T.piName) +
     ' (연구책임자)</b>입니다.</p>' +
-    '<p>수집되는 개인정보는 <b>(i) Prolific 참가자 ID 와 (ii) Prolific 세션 ' +
-    'ID</b> 두 가지이며, <b>사례비 지급과 중복 참여 방지</b>를 위해 수집합니다. ' +
-    '이는 Prolific 내부의 가명 식별자로, 이를 통해 귀하의 이름·이메일·연락처를 ' +
-    '알 수 없습니다. <b>이름, 이메일 주소, 전화번호, 주소, 생년월일, IP 주소는 ' +
+    '<p>수집되는 개인정보는 <b>(i) Prolific 참가자 ID, (ii) Prolific 세션 ID, ' +
+    '(iii) 연령과 성별</b> 입니다. 앞의 두 가지는 <b>사례비 지급과 중복 참여 ' +
+    '방지</b>를 위해 수집하며, Prolific 내부의 가명 식별자로 이를 통해 귀하의 ' +
+    '이름·이메일·연락처를 알 수 없습니다. 연령과 성별은 <b>참여하신 분들의 구성을 ' +
+    '기술하기 위해서만</b> 수집하며, 집단 수치로만 보고하고 개인별로는 보고하지 ' +
+    '않습니다. <b>연령 문항은 비워 두실 수 있고 성별은 “응답하지 않음”을 ' +
+    '선택하실 수 있으며, 어느 쪽도 사례비를 비롯한 어떤 것에도 영향을 주지 ' +
+    '않습니다.</b> <b>이름, 이메일 주소, 전화번호, 주소, 생년월일, IP 주소는 ' +
     '수집하지 않습니다.</b></p>' +
     '<p>이 자료는 연구책임자와 공동연구자만 접근할 수 있으며, 연구책임자의 ' +
     '서울대학교 기관 계정으로 관리되는 클라우드 저장소와 비밀번호로 보호된 기관 ' +
@@ -303,11 +318,22 @@ var T = {
     scale('fam', '전혀 안 씀', '매일', 5) +
     '<p class="q">읽고 계신지 확인하기 위한 문항입니다. 세 번째를 선택해 주십시오.</p>' +
     scale('att', '첫 번째', '다섯 번째', 5) +
+    '</div>' +
+    '<div class="card">' +
+    '<p class="q">연세가 어떻게 되십니까?</p>' +
+    '<input type="number" id="age" min="18" max="99" step="1">' +
+    '<span class="units">세</span>' +
+    '<p class="muted">답하고 싶지 않으시면 비워 두셔도 됩니다.</p>' +
+    '<p class="q">성별은 어떻게 되십니까?</p>' +
+    choices('gender', [['female', '여성'], ['male', '남성'],
+                       ['other', '그 외'],
+                       ['declined', '응답하지 않음']]) +
     '<div class="err" id="e"></div></div>' +
     '<button id="go">계속</button>'
     );
   },
   errAnswerAll: '모든 문항에 답해 주십시오.',
+  errAge: '18세에서 99세 사이로 입력하시거나, 칸을 비워 두십시오.',
   btnContinue: '계속',
 
   // ---- 디브리핑 -----------------------------------------------------------
@@ -562,7 +588,8 @@ function postPerson(done) {
   });
   ['trust', 'distrust', 'verify_intent', 'perceived_accuracy',
    'perceived_confidence',
-   'numeracy', 'ai_familiarity', 'attention_check'].forEach(function (k) {
+   'numeracy', 'ai_familiarity', 'attention_check',
+   'age', 'gender'].forEach(function (k) {
     row[k] = S.post[k];
   });
   post('person', row);
@@ -600,6 +627,15 @@ function scale(name, lo, hi, n) {
   out += '</div><div class="ends muted"><span>' + esc(lo) + '</span><span>' +
          esc(hi) + '</span></div>';
   return out;
+}
+function choices(name, opts) {
+  var out = '<div class="choices">';
+  for (var i = 0; i < opts.length; i++) {
+    out += '<label class="choice"><input type="radio" name="' + name +
+           '" value="' + opts[i][0] + '"><span>' + esc(opts[i][1]) +
+           '</span></label>';
+  }
+  return out + '</div>';
 }
 function picked(name) {
   var el = document.querySelector('input[name="' + name + '"]:checked');
@@ -766,16 +802,23 @@ function screenPost() {
     T.postBody());
   $('go').onclick = function () {
     var pa = $('pa').value.trim(), pc = $('pc').value.trim(),
-        num = $('num').value.trim();
+        num = $('num').value.trim(), age = $('age').value.trim();
     var t = picked('trust'), d = picked('distrust'), v = picked('verify'),
-        f = picked('fam'), a = picked('att');
-    if (!t || !d || !v || !f || !a || pa === '' || pc === '' || num === '') {
+        f = picked('fam'), a = picked('att'), g = picked('gender');
+    if (!t || !d || !v || !f || !a || !g || pa === '' || pc === '' || num === '') {
       $('e').textContent = T.errAnswerAll; return;
+    }
+    // Age is the one item a participant may leave blank; '' means declined,
+    // which is not the same as a missing row. Gender carries its own
+    // decline option, so it is required like the rest.
+    if (age !== '' && (isNaN(Number(age)) || Number(age) < 18 || Number(age) > 99)) {
+      $('e').textContent = T.errAge; return;
     }
     S.post = {trust: t, distrust: d, verify_intent: v,
               perceived_accuracy: Number(pa),
               perceived_confidence: Number(pc), numeracy: Number(num),
-              ai_familiarity: f, attention_check: a};
+              ai_familiarity: f, attention_check: a,
+              age: age === '' ? '' : Number(age), gender: g};
     S.stage = 'debrief'; save(); screenDebrief();
   };
 }
