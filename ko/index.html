@@ -315,7 +315,7 @@ var T = {
     '<div class="card">' +
     '<p class="q">주머니에 구슬 1,000개가 있고 그중 10개가 빨간색입니다. 하나를 ' +
     '무작위로 꺼낼 때 빨간색일 확률은 몇 %입니까?</p>' +
-    '<input type="number" id="num" step="any"><span class="units">%</span>' +
+    '<input type="number" id="num" min="0" max="100" step="any"><span class="units">%</span>' +
     '<p class="q">ChatGPT나 Claude 같은 AI 어시스턴트를 얼마나 자주 사용하십니까?</p>' +
     scale('fam', '전혀 안 씀', '매일', 5) +
     '<p class="q">읽고 계신지 확인하기 위한 문항입니다. 세 번째를 선택해 주십시오.</p>' +
@@ -336,6 +336,8 @@ var T = {
     );
   },
   errAnswerAll: '모든 문항에 답해 주십시오.',
+  errNumber: '숫자를 입력해 주십시오.',
+  errRange0100: '0에서 100 사이의 값을 입력해 주십시오.',
   errAge: '18세에서 99세 사이로 입력하시거나 ‘응답하지 않음’을 선택해 주십시오.',
   btnContinue: '계속',
 
@@ -631,6 +633,23 @@ function scale(name, lo, hi, n) {
          esc(hi) + '</span></div>';
   return out;
 }
+// HTML min/max are advisory: a field marked max="100" will still hand us 500,
+// and step="any" will hand us Infinity for "1e999". Every numeric field is
+// read through here so a range can never be declared in the markup and then
+// forgotten at the point it is read.
+function readNum(id, lo, hi) {
+  var raw = $(id).value.trim();
+  if (raw === '') { return null; }
+  var v = Number(raw);
+  if (!isFinite(v) || v < lo || v > hi) { return null; }
+  return v;
+}
+
+// Answers are figures copied out of a filing, so they may be negative (a loss)
+// and we cannot bound them against the true value without shipping the answer
+// key to a public page. This only rejects what no filing could contain.
+var ANS_LIMIT = 1e12;
+
 // The one value that means "asked, and chose not to answer". Kept identical
 // across languages and across both demographic items.
 var DECLINED = 'prefer_not_to_say';
@@ -705,11 +724,9 @@ function screenPractice() {
     '<button id="go">' + T.btnSubmit + '</button>');
   $('ans').focus();
   $('go').onclick = function () {
-    var v = $('ans').value.trim();
-    if (v === '' || isNaN(Number(v))) {
-      $('e').textContent = 'Please enter a number.'; return;
-    }
-    S.practice.push({item_id: PRACTICE[S.idx], answer: Number(v),
+    var v = readNum('ans', -ANS_LIMIT, ANS_LIMIT);
+    if (v === null) { $('e').textContent = T.errNumber; return; }
+    S.practice.push({item_id: PRACTICE[S.idx], answer: v,
                      seconds: Math.round((Date.now() - t0) / 1000)});
     S.idx++; save(); screenPractice();
   };
@@ -734,11 +751,9 @@ function screenTrial() {
     '<button id="go">' + T.btnSubmitMine + '</button>');
   $('ans').focus();
   $('go').onclick = function () {
-    var v = $('ans').value.trim();
-    if (v === '' || isNaN(Number(v))) {
-      $('e').textContent = 'Please enter a number.'; return;
-    }
-    stage2(t, it, n, Number(v), Math.round((Date.now() - t0) / 1000));
+    var v = readNum('ans', -ANS_LIMIT, ANS_LIMIT);
+    if (v === null) { $('e').textContent = T.errNumber; return; }
+    stage2(t, it, n, v, Math.round((Date.now() - t0) / 1000));
   };
 }
 
@@ -782,17 +797,15 @@ function stage2(t, it, n, initial, t1) {
   };
 
   $('go').onclick = function () {
-    var v = $('fin').value.trim();
-    if (v === '' || isNaN(Number(v))) {
-      $('e').textContent = 'Please enter a number.'; return;
-    }
+    var v = readNum('fin', -ANS_LIMIT, ANS_LIMIT);
+    if (v === null) { $('e').textContent = T.errNumber; return; }
     if (openedAt) { reopenMs += Date.now() - openedAt; openedAt = 0; }
     var row = {
       participant: S.participant, prolific_pid: PROLIFIC_PID,
       session: SESSION_ID, cell: S.cell, version: S.version,
       build: S.build, lang: T.htmlLang,
       position: t.p, item_id: t.i,
-      initial_estimate: initial, final_estimate: Number(v),
+      initial_estimate: initial, final_estimate: v,
       t_stage1: t1, t_stage2: Math.round((Date.now() - t0) / 1000),
       reopen_count: reopenCount, reopen_ms: reopenMs
     };
@@ -814,12 +827,20 @@ function screenPost() {
     if (this.checked) { $('age').value = ''; }
   };
   $('go').onclick = function () {
-    var pa = $('pa').value.trim(), pc = $('pc').value.trim(),
-        num = $('num').value.trim(), age = $('age').value.trim();
+    var age = $('age').value.trim();
     var t = picked('trust'), d = picked('distrust'), v = picked('verify'),
         f = picked('fam'), a = picked('att'), g = picked('gender');
-    if (!t || !d || !v || !f || !a || !g || pa === '' || pc === '' || num === '') {
+    if (!t || !d || !v || !f || !a || !g ||
+        $('pa').value.trim() === '' || $('pc').value.trim() === '' ||
+        $('num').value.trim() === '') {
       $('e').textContent = T.errAnswerAll; return;
+    }
+    // All three are proportions of a fixed whole, so anything outside 0-100 is
+    // a slip or a keyboard mash, not an opinion worth recording.
+    var pa = readNum('pa', 0, 100), pc = readNum('pc', 0, 100),
+        num = readNum('num', 0, 100);
+    if (pa === null || pc === null || num === null) {
+      $('e').textContent = T.errRange0100; return;
     }
     // Declining age is a recorded answer, not an empty cell: a blank could not
     // be told apart from a row that failed to write. Both this and gender
@@ -831,8 +852,8 @@ function screenPost() {
       $('e').textContent = T.errAge; return;
     }
     S.post = {trust: t, distrust: d, verify_intent: v,
-              perceived_accuracy: Number(pa),
-              perceived_confidence: Number(pc), numeracy: Number(num),
+              perceived_accuracy: pa,
+              perceived_confidence: pc, numeracy: num,
               ai_familiarity: f, attention_check: a,
               age: ageDeclined ? DECLINED : Number(age), gender: g};
     S.stage = 'debrief'; save(); screenDebrief();
