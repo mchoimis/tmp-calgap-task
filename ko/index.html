@@ -478,6 +478,13 @@ function load() {
   } catch (e) { return null; }
 }
 function progress(f) { $('prog').style.width = Math.round(f * 100) + '%'; }
+/** How much of an excerpt fits without scrolling depends on this. */
+function screenSize() {
+  try {
+    return window.innerWidth + 'x' + window.innerHeight +
+           '@' + (window.devicePixelRatio || 1);
+  } catch (e) { return ''; }
+}
 function flash(msg) {
   $('saving').textContent = msg;
   if (msg) setTimeout(function () { $('saving').textContent = ''; }, 2500);
@@ -538,7 +545,8 @@ function postPerson(done) {
   var row = {
     participant: S.participant, prolific_pid: PROLIFIC_PID,
     session: SESSION_ID, cell: S.cell, version: S.version,
-    user_agent: navigator.userAgent, consent: S.consent,
+    build: S.build, lang: T.htmlLang,
+    user_agent: navigator.userAgent, screen: screenSize(), consent: S.consent,
     comprehension_tries: S.comprehension_tries,
     total_seconds: Math.round((Date.now() - S.startedAt) / 1000),
     debrief_seen: done ? 'yes' : 'no',
@@ -550,6 +558,7 @@ function postPerson(done) {
   S.practice.forEach(function (p, i) {
     row['practice_' + (i + 1) + '_item'] = p.item_id;
     row['practice_' + (i + 1) + '_answer'] = p.answer;
+    row['practice_' + (i + 1) + '_seconds'] = p.seconds;
   });
   ['trust', 'distrust', 'verify_intent', 'perceived_accuracy',
    'perceived_confidence',
@@ -738,6 +747,7 @@ function stage2(t, it, n, initial, t1) {
     var row = {
       participant: S.participant, prolific_pid: PROLIFIC_PID,
       session: SESSION_ID, cell: S.cell, version: S.version,
+      build: S.build, lang: T.htmlLang,
       position: t.p, item_id: t.i,
       initial_estimate: initial, final_estimate: Number(v),
       t_stage1: t1, t_stage2: Math.round((Date.now() - t0) / 1000),
