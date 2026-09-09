@@ -92,6 +92,10 @@ window.STIM = {"build":"efb574533e7e","items":{"IT-019":{"q":"What were business
 // 사실만으로 영어 승인본이 한국어에 적용되지 않습니다.
 
 var T = {
+  // The investigator's details, as they appear on the consent screen and
+  // the debrief. The e-mail address is PI_EMAIL in Index.html. All three
+  // are printed on a public page, so set them to what you are willing to
+  // publish. Rebuild and push after any change.
   piName: '최민정',
   piAffil: '서울대학교 경영대학 경영학과 박사과정 연구원',
 
@@ -216,12 +220,10 @@ var T = {
     '<h2>11. 어디로 연락하나요?</h2>' +
     '<p>연구에 관한 질문이나 연구 중 문제가 있을 때:<br>' +
     esc(T.piAffil) + ' ' + esc(T.piName) + ' (연구책임자)<br>' +
-    '이메일: <a href="mailto:' + esc(PI_EMAIL) + '">' + esc(PI_EMAIL) +
-    '</a></p>' +
+    '이메일: ' + esc(PI_EMAIL) + '</p>' +
     '<p>연구 참여자로서의 권리에 관한 질문:<br>' +
     '서울대학교 생명윤리위원회(SNUIRB)<br>' +
-    '전화: ' + esc(IRB_PHONE) + ' &nbsp;·&nbsp; 이메일: <a href="mailto:' +
-    esc(IRB_EMAIL) + '">' + esc(IRB_EMAIL) + '</a><br>' +
+    '전화: ' + esc(IRB_PHONE) + ' &nbsp;·&nbsp; 이메일: ' + esc(IRB_EMAIL) + '<br>' +
     'IRB 승인번호: ' + esc(IRB_NUMBER) + '</p>' +
     '</div>' +
 
@@ -414,12 +416,10 @@ var T = {
 
     '<h2>6. 연락처</h2>' +
     '<p>' + esc(T.piAffil) + ' ' + esc(T.piName) + ' (연구책임자)' +
-    '<br>이메일: <a href="mailto:' + esc(PI_EMAIL) + '">' + esc(PI_EMAIL) +
-    '</a></p>' +
+    '<br>이메일: ' + esc(PI_EMAIL) + '</p>' +
     '<p>연구 참여자로서의 권리에 관한 질문:<br>' +
     '서울대학교 생명윤리위원회(SNUIRB)<br>' +
-    '전화: ' + esc(IRB_PHONE) + ' &nbsp;·&nbsp; 이메일: <a href="mailto:' +
-    esc(IRB_EMAIL) + '">' + esc(IRB_EMAIL) + '</a><br>' +
+    '전화: ' + esc(IRB_PHONE) + ' &nbsp;·&nbsp; 이메일: ' + esc(IRB_EMAIL) + '<br>' +
     'IRB 승인번호: ' + esc(IRB_NUMBER) + '</p>' +
     '<p class="muted">나중에 참여할 수도 있는 분에게 이 페이지의 내용을 알려주지 ' +
     '말아주십시오 — 미리 알고 참여하면 그분의 자료를 쓸 수 없습니다.</p>' +
@@ -479,9 +479,21 @@ var COMPLETION_URL = q('completion');
 // consent screen and again on the debrief, which is what the IRB approves; a
 // page that shows different wording from the approved documents is a protocol
 // violation on its own, so these live here rather than inline in two places.
-// The principal investigator's name and affiliation are in the language files:
-// they are written differently in Korean and in English, and the Korean consent
-// form is a Korean document, not a transliteration of the English one.
+//
+// WHERE THE INVESTIGATOR'S DETAILS LIVE — three values, two files:
+//   PI_EMAIL   this file, the line below
+//   piName     lang.en.js and lang.ko.js, top of each file
+//   piAffil    lang.en.js and lang.ko.js, top of each file
+// Name and affiliation sit in the language files because they are written
+// differently in each: the Korean consent form is a Korean document, not a
+// transliteration of the English one. Change a value, rebuild both sites, and
+// push — the built page is a static file, so nothing updates on its own.
+//
+// These three are printed on the consent screen and again on the debrief, and
+// the published page is public, so whatever is set here is public too. That is
+// unavoidable: a participant must be able to identify and contact the
+// investigator before consenting. Keep them to what the approved documents
+// require and no more, and prefer an address you are willing to publish.
 var IRB_NUMBER = '[IRB approval number]';
 var PI_EMAIL   = 'mchoixx@snu.ac.kr';
 var IRB_PHONE  = '+82-2-880-5153';
