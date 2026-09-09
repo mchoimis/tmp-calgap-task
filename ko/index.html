@@ -103,11 +103,12 @@ var T = {
     return (
     '<h1>연구 참여 설명문 및 동의서</h1>' +
     '<div class="card">' +
-    '<p><b>연구 제목:</b> AI가 표명하는 확신의 어긋난 방향이 사용자의 의존과 ' +
-    '신뢰에 미치는 영향</p>' +
+    '<p><b>연구 제목:</b> 기업 재무공시에서 수치를 찾고 확인하는 과정 — ' +
+    'AI 어시스턴트가 있을 때와 없을 때</p>' +
     '<p><b>연구책임자:</b> ' + esc(T.piAffil) + ' ' + esc(T.piName) + '</p>' +
-    '<p>귀하는 <b>기업의 재무공시 수치를 판단할 때 사람들이 AI 어시스턴트가 표명하는 ' +
-    '확신을 어떻게 사용하는지</b>에 관한 연구에 참여하도록 초대되었습니다. ' +
+    '<p>귀하는 <b>사람들이 기업의 재무공시에서 수치를 찾아 확인하는 방식, 그리고 ' +
+    'AI 어시스턴트를 쓸 수 있을 때 그 판단이 어떻게 달라지는지</b>에 관한 연구에 ' +
+    '참여하도록 초대되었습니다. ' +
     'Prolific 연구 패널의 성인 회원이며 <b>영어로 작성된 자료를 읽고 판단할 수 ' +
     '있는 분</b>이기에 초대되었습니다. 참여는 전적으로 자발적입니다. 결정하시기 ' +
     '전에 아래 내용을 잘 읽어주십시오.</p>' +
@@ -117,8 +118,13 @@ var T = {
     '가져온 것이라 번역하지 않습니다.</p>' +
 
     '<h2>1. 이 연구는 왜 하나요?</h2>' +
-    '<p>AI 어시스턴트가 자기 답변에 대해 표명하는 확신의 정도가, 사람들의 판단과 ' +
-    '어시스턴트에 대한 의존에 어떤 영향을 주는지 알아보기 위해서입니다.</p>' +
+    '<p>사람들이 기업의 재무공시에서 수치를 찾아 확인하는 방식, 그리고 AI ' +
+    '어시스턴트를 쓸 수 있다는 점이 그 판단에 어떤 영향을 주는지 알아보기 ' +
+    '위해서입니다.</p>' +
+    '<p class="muted">무엇을 무엇과 비교하는지에 관한 <b>일부 내용은 마지막에 ' +
+    '알려드립니다.</b> 미리 알려드리면 저희가 재려는 행동 자체가 달라지기 ' +
+    '때문입니다. <b>마지막 페이지에서 감춘 내용과 그 이유를 모두 말씀드리며</b>, ' +
+    '읽으신 뒤 자료 사용을 철회하실 수 있습니다.</p>' +
 
     '<h2>2. 몇 명이 참여하나요?</h2>' +
     '<p>만 19세 이상 성인 250명입니다.</p>' +
@@ -140,8 +146,8 @@ var T = {
     '문항을 맞혔다고 생각하는지, 확률 문제 1개, AI 어시스턴트를 얼마나 자주 쓰는지, ' +
     '그리고 <b>연령과 성별</b>.<br>' +
     '5) <b>연구에 대해 더 설명하는 마지막 페이지</b>가 나옵니다. 꼭 읽어주십시오.</p>' +
-    '<p>귀하의 답변, 각 화면에 머문 시간, 발췌문을 다시 편 횟수와 시간이 ' +
-    '기록됩니다.</p>' +
+    '<p>귀하의 답변, 각 화면에 머문 시간, 이 페이지가 화면 앞에 있었는지 아니면 ' +
+    '뒤로 가 있었는지, 발췌문을 다시 편 횟수와 시간이 기록됩니다.</p>' +
 
     '<h2>4. 시간이 얼마나 걸리나요?</h2>' +
     '<p><b>약 10분</b>이며, 한 번만 참여합니다. 다시 오시라고 요청하지 ' +
@@ -197,8 +203,15 @@ var T = {
     '<h2>10. 사례비가 있나요?</h2>' +
     '<p>예. 감사의 표시로 Prolific을 통해 <b>' + esc(PAYMENT) + '</b>이 ' +
     '지급됩니다. 예상 소요시간 10분에 대한 시간당 £10 기준입니다. ' +
-    '<b>답변이 나중에 분석에서 제외되더라도 사례비는 지급되며</b>, 중간에 ' +
+    '<b>이 사례비는 시간에 대한 것이며 귀하의 답변과 전혀 무관합니다.</b> ' +
+    '답변이 나중에 분석에서 제외되더라도 지급되며, 중간에 ' +
     '그만두신 경우에도 수행한 만큼의 지급을 요청하실 수 있습니다.</p>' +
+    '<p><b>이와 별도로</b>, 최종 답이 정확한 분에 한해 <b>' + esc(DRAW_PRIZE) +
+    '</b> 추첨 대상이 됩니다. 당첨 확률은 <b>' + esc(DRAW_ODDS) + '</b> 정도입니다. ' +
+    '추첨은 자료 수집이 끝난 뒤에 하며, 당첨되신 분께는 귀하가 모집된 것과 같은 ' +
+    '경로로 연락드리므로 <b>추가로 개인정보를 받지 않습니다.</b> 정답을 맞히지 ' +
+    '못하거나 추첨에 되지 않아도 불이익은 없으며, 위의 사례비는 그대로 ' +
+    '지급됩니다.</p>' +
 
     '<h2>11. 어디로 연락하나요?</h2>' +
     '<p>연구에 관한 질문이나 연구 중 문제가 있을 때:<br>' +
@@ -373,10 +386,18 @@ var T = {
     '아니라는 점, 그리고 얼마나 자주 맞는지와 얼마나 확신하는 것처럼 들리는지는 서로 ' +
     '다르다는 점을 분명히 밝혔습니다.</p>' +
 
-    '<h2>3. 귀하에 대해 평가된 것은 없습니다</h2>' +
-    '<p><b>귀하의 수행은 평가되지 않았습니다.</b> 몇 문항을 맞혔는지는 저희의 연구 ' +
-    '대상이 아니며, 옳거나 그른 응답 방식도 없었습니다. 저희는 세 집단의 평균 차이를 ' +
-    '볼 뿐 개인을 보지 않습니다. 사례비는 귀하의 답변과 전혀 무관합니다.</p>' +
+    '<h2>3. 귀하라는 사람이 평가된 것은 아닙니다</h2>' +
+    '<p><b>귀하의 사람됨이 평가된 것이 아닙니다.</b> 몇 문항을 맞혔는지는 저희의 ' +
+    '연구 대상이 아닙니다. 저희는 세 집단의 평균 차이를 볼 뿐 개인을 보지 않으며, ' +
+    '귀하의 답변은 어디에도 보고되거나 공유되지 않습니다. <b>사례비는 귀하의 ' +
+    '답변과 전혀 무관하며</b>, 정확도는 설명문에 안내된 추첨 대상 여부에만 ' +
+    '관계됩니다.</p>' +
+    '<p>설명문에서 연구 목적을 다소 일반적으로 적어드린 것을 눈치채셨을 수 ' +
+    '있습니다. 의도한 것입니다. 집단마다 달랐던 것이 어시스턴트의 <i>표명된 ' +
+    '확신</i>이라고 미리 적었다면 귀하는 그것을 주시하셨을 것이고, 저희는 귀하가 ' +
+    '어시스턴트를 실제로 어떻게 쓰는지가 아니라 <b>저희 안내에 어떻게 반응하는지를 ' +
+    '재게 되었을 것입니다.</b> 설명문에 거짓은 없었습니다. 이 페이지보다 덜 ' +
+    '구체적이었을 뿐이며, 이 페이지가 전부입니다.</p>' +
 
     '<h2>4. 이것이 왜 중요한가</h2>' +
     '<p>AI가 표명한 확신이 실제 정확도와 얼마나 맞는지를 재는 표준적인 방법은 ' +
@@ -466,6 +487,10 @@ var PI_EMAIL   = 'mchoixx@snu.ac.kr';
 var IRB_PHONE  = '+82-2-880-5153';
 var IRB_EMAIL  = 'irb@snu.ac.kr';
 var PAYMENT    = '£1.67';
+// The accuracy-contingent draw. The base payment above is never conditional on
+// performance; this is on top of it. Fill both in before submitting to the IRB.
+var DRAW_PRIZE = '[prize and value]';
+var DRAW_ODDS  = '[number of prizes] in [number of participants]';
 
 // ---- pre-registered instrument constants ---------------------------------
 var N_TRIALS   = 10;
@@ -650,6 +675,26 @@ function readNum(id, lo, hi) {
 // key to a public page. This only rejects what no filing could contain.
 var ANS_LIMIT = 1e12;
 
+// Time this page spent hidden — another tab in front, the window minimised,
+// the phone locked. A participant who walks away and comes back sits inside
+// any time floor while having read nothing, so elapsed time on its own cannot
+// tell attention from absence. Only visibilitychange is used: it is the signal
+// browsers agree on, where window blur also fires for things that are not the
+// participant leaving.
+var hiddenMs = 0, hiddenSince = 0;
+document.addEventListener('visibilitychange', function () {
+  if (document.hidden) {
+    hiddenSince = Date.now();
+  } else if (hiddenSince) {
+    hiddenMs += Date.now() - hiddenSince;
+    hiddenSince = 0;
+  }
+});
+function hiddenReset() { hiddenMs = 0; hiddenSince = document.hidden ? Date.now() : 0; }
+function hiddenTotal() {
+  return hiddenMs + (hiddenSince ? Date.now() - hiddenSince : 0);
+}
+
 // The one value that means "asked, and chose not to answer". Kept identical
 // across languages and across both demographic items.
 var DECLINED = 'prefer_not_to_say';
@@ -740,6 +785,7 @@ function screenTrial() {
   progress(0.16 + 0.62 * (S.idx / N_TRIALS));
 
   var t0 = Date.now();
+  hiddenReset();
   show(
     '<h1>' + esc(T.itemTitle(n, N_TRIALS)) + '</h1>' +
     '<div class="card"><div class="muted">' + esc(it.co) + ' · FY' +
@@ -807,7 +853,8 @@ function stage2(t, it, n, initial, t1) {
       position: t.p, item_id: t.i,
       initial_estimate: initial, final_estimate: v,
       t_stage1: t1, t_stage2: Math.round((Date.now() - t0) / 1000),
-      reopen_count: reopenCount, reopen_ms: reopenMs
+      reopen_count: reopenCount, reopen_ms: reopenMs,
+      hidden_ms: hiddenTotal()
     };
     S.trials.push(row);
     postTrial(row);

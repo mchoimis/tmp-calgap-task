@@ -108,21 +108,25 @@ var T = {
     return (
 '<h1>Research participation — information and consent</h1>' +
     '<div class="card">' +
-    '<p><b>Study title:</b> The direction of miscalibration in AI-stated ' +
-    'confidence and its effect on user reliance and trust</p>' +
+    '<p><b>Study title:</b> Finding and checking figures in corporate ' +
+    'financial filings, with and without an AI assistant</p>' +
     '<p><b>Principal investigator:</b> ' + esc(T.piName) + ', PhD student, ' +
     esc(T.piAffil) + '</p>' +
-    '<p>You are invited to take part in a study about <b>how people use an AI ' +
-    'assistant’s stated confidence when judging figures in corporate ' +
-    'financial filings.</b> You were invited because you are an adult member ' +
+    '<p>You are invited to take part in a study about <b>how people find and ' +
+    'check figures in corporate financial filings, and how having an AI ' +
+    'assistant available changes that.</b> You were invited because you are an adult member ' +
     'of the Prolific research panel who can read and reason about material ' +
     'written in English. Participation is entirely voluntary. Please read the ' +
     'following carefully before deciding.</p>' +
 
     '<h2>1. Why is this study being done?</h2>' +
-    '<p>To find out how the level of confidence an AI assistant states about ' +
-    'its own answers affects the judgments people make and how much they rely ' +
-    'on it.</p>' +
+    '<p>To find out how people locate and check figures in corporate ' +
+    'financial filings, and how the availability of an AI assistant affects ' +
+    'the judgments they reach.</p>' +
+    '<p class="muted">Some detail about what is being compared is held back ' +
+    'until the end, because knowing it in advance would change the very ' +
+    'behaviour being measured. <b>The last page tells you everything that was ' +
+    'held back and why</b>, and you can withdraw your data after reading it.</p>' +
 
     '<h2>2. How many people will take part?</h2>' +
     '<p>250 adults aged 19 or over.</p>' +
@@ -149,7 +153,8 @@ var T = {
     '<b>your age and gender</b>.<br>' +
     '5) A <b>final page explaining more about the study</b> is shown. Please ' +
     'read it.</p>' +
-    '<p>We record your answers, the time you spend on each screen, and how ' +
+    '<p>We record your answers, the time you spend on each screen, whether ' +
+    'this page was in front of you or in the background, and how ' +
     'often and how long you re-open the excerpt.</p>' +
 
     '<h2>4. How long will it take?</h2>' +
@@ -219,9 +224,17 @@ var T = {
     '<h2>10. Will I be paid?</h2>' +
     '<p>Yes. You will be paid <b>' + esc(PAYMENT) + '</b> through Prolific as ' +
     'a token of thanks — a rate of £10 per hour for the estimated 10 ' +
-    'minutes. <b>You are paid even if your responses are later excluded from ' +
-    'analysis</b>, and if you stop partway through you can request payment ' +
-    'for the part you completed.</p>' +
+    'minutes. <b>This payment is for your time and does not depend on your ' +
+    'answers in any way.</b> You are paid even if your responses are later ' +
+    'excluded from analysis, and if you stop partway through you can request ' +
+    'payment for the part you completed.</p>' +
+    '<p><b>In addition</b>, participants whose final answers are accurate go ' +
+    'into a draw for <b>' + esc(DRAW_PRIZE) + '</b>. The chance of winning is ' +
+    'about <b>' + esc(DRAW_ODDS) + '</b>. The draw is made after data ' +
+    'collection closes and winners are contacted through the same platform ' +
+    'you were recruited on, so <b>no further personal information is needed ' +
+    'from you.</b> Not being accurate, and not winning, cost you nothing: the ' +
+    'payment above is unaffected.</p>' +
 
     '<h2>11. Who do I contact?</h2>' +
     '<p>For questions about the study or problems during it:<br>' +
@@ -411,11 +424,19 @@ var T = {
     'and how confident it sounds are not the same thing.</p>' +
 
     '<h2>3. Nothing about you was assessed</h2>' +
-    '<p><b>Your performance was not evaluated.</b> How many items you got ' +
-    'right is not what we are studying, and there were no correct or ' +
-    'incorrect ways to respond. We look at the average difference between the ' +
-    'three groups, not at any individual. Your payment does not depend on ' +
-    'your answers in any way.</p>' +
+    '<p><b>You were not being assessed as a person.</b> How many items you ' +
+    'got right is not what we are studying. We look at the average difference ' +
+    'between the three groups, not at any individual, and nothing about your ' +
+    'answers is reported or shared. <b>Your payment does not depend on your ' +
+    'answers in any way</b> — accuracy affects only entry into the prize ' +
+    'draw described in the information sheet.</p>' +
+    '<p>You may also have noticed that the information sheet described the ' +
+    'purpose of the study in general terms. That was deliberate. Had it said ' +
+    'that the assistant’s <i>stated confidence</i> was what varied between ' +
+    'groups, you would have watched for it, and we would have measured your ' +
+    'response to our instruction rather than your own use of the assistant. ' +
+    'Nothing in the information sheet was untrue; it was less specific than ' +
+    'this page, and this page is the full account.</p>' +
 
     '<h2>4. Why this matters</h2>' +
     '<p>The standard way of scoring how well an AI’s stated confidence ' +
@@ -511,6 +532,10 @@ var PI_EMAIL   = 'mchoixx@snu.ac.kr';
 var IRB_PHONE  = '+82-2-880-5153';
 var IRB_EMAIL  = 'irb@snu.ac.kr';
 var PAYMENT    = '£1.67';
+// The accuracy-contingent draw. The base payment above is never conditional on
+// performance; this is on top of it. Fill both in before submitting to the IRB.
+var DRAW_PRIZE = '[prize and value]';
+var DRAW_ODDS  = '[number of prizes] in [number of participants]';
 
 // ---- pre-registered instrument constants ---------------------------------
 var N_TRIALS   = 10;
@@ -695,6 +720,26 @@ function readNum(id, lo, hi) {
 // key to a public page. This only rejects what no filing could contain.
 var ANS_LIMIT = 1e12;
 
+// Time this page spent hidden — another tab in front, the window minimised,
+// the phone locked. A participant who walks away and comes back sits inside
+// any time floor while having read nothing, so elapsed time on its own cannot
+// tell attention from absence. Only visibilitychange is used: it is the signal
+// browsers agree on, where window blur also fires for things that are not the
+// participant leaving.
+var hiddenMs = 0, hiddenSince = 0;
+document.addEventListener('visibilitychange', function () {
+  if (document.hidden) {
+    hiddenSince = Date.now();
+  } else if (hiddenSince) {
+    hiddenMs += Date.now() - hiddenSince;
+    hiddenSince = 0;
+  }
+});
+function hiddenReset() { hiddenMs = 0; hiddenSince = document.hidden ? Date.now() : 0; }
+function hiddenTotal() {
+  return hiddenMs + (hiddenSince ? Date.now() - hiddenSince : 0);
+}
+
 // The one value that means "asked, and chose not to answer". Kept identical
 // across languages and across both demographic items.
 var DECLINED = 'prefer_not_to_say';
@@ -785,6 +830,7 @@ function screenTrial() {
   progress(0.16 + 0.62 * (S.idx / N_TRIALS));
 
   var t0 = Date.now();
+  hiddenReset();
   show(
     '<h1>' + esc(T.itemTitle(n, N_TRIALS)) + '</h1>' +
     '<div class="card"><div class="muted">' + esc(it.co) + ' · FY' +
@@ -852,7 +898,8 @@ function stage2(t, it, n, initial, t1) {
       position: t.p, item_id: t.i,
       initial_estimate: initial, final_estimate: v,
       t_stage1: t1, t_stage2: Math.round((Date.now() - t0) / 1000),
-      reopen_count: reopenCount, reopen_ms: reopenMs
+      reopen_count: reopenCount, reopen_ms: reopenMs,
+      hidden_ms: hiddenTotal()
     };
     S.trials.push(row);
     postTrial(row);
