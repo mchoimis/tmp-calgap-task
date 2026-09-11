@@ -66,6 +66,7 @@
   .choices .choice:has(input:checked) { border-color: var(--accent);
                  background: #eaf1f8; }
   .q { margin: 18px 0 6px; font-weight: 600; }
+  .q.lk { margin-top: 14px; font-weight: 500; }
   .saving { position: fixed; right: 12px; bottom: 12px; font-size: 12px;
             color: var(--dim); }
   .hidden { display: none !important; }
@@ -144,11 +145,11 @@ var T = {
     '어시스턴트가 얼마나 확신하는지에 대한 문장</b>을 보고 <b>최종 답</b>을 적습니다. ' +
     '발췌문은 접혀 있지만 버튼 하나로 언제든 다시 펼 수 있습니다. ' +
     '<b>계산은 필요 없습니다</b> — 모든 답은 발췌문에 적혀 있는 숫자입니다.<br>' +
-    '4) 본 문항 10개가 끝난 뒤 <b>마무리 질문 10개</b>에 답합니다: ' +
-    '어시스턴트를 얼마나 신뢰했는지, 어시스턴트가 실제보다 ' +
-    '더 확신하는 척한다고 의심했는지, 발췌문을 얼마나 직접 확인했는지, 어시스턴트가 몇 ' +
-    '문항을 맞혔다고 생각하는지, 확률 문제 1개, AI 어시스턴트를 얼마나 자주 쓰는지, ' +
-    '그리고 <b>연령과 성별</b>.<br>' +
+    '4) 본 문항 10개가 끝난 뒤 <b>약 20문항의 짧은 설문</b>에 답합니다: ' +
+    '어시스턴트를 얼마나 신뢰했는지 또는 불신했는지에 관한 문장 11개, 어시스턴트가 ' +
+    '실제보다 더 확신하는 척한다고 의심했는지, 발췌문을 얼마나 직접 확인했는지, ' +
+    '어시스턴트가 몇 문항을 맞혔다고 생각하는지, 확률 문제 1개, AI 어시스턴트를 얼마나 ' +
+    '자주 쓰는지, 그리고 <b>연령과 성별</b>.<br>' +
     '5) <b>연구에 대해 더 설명하는 마지막 페이지</b>가 나옵니다. 꼭 읽어주십시오.</p>' +
     '<p>귀하의 답변, 각 화면에 머문 시간, 이 페이지가 화면 앞에 있었는지 아니면 ' +
     '뒤로 가 있었는지, 발췌문을 다시 편 횟수와 시간이 기록됩니다.</p>' +
@@ -308,15 +309,37 @@ var T = {
   finalAnswerLabel: '최종 답',
 
   // ---- 사후 측정 ----------------------------------------------------------
+  // 신뢰·불신 다항목 척도. Ou & Sia (2010) Appendix A를 어시스턴트 맥락으로 옮긴 것.
+  // 한국어 문항은 초안이며 저자가 다듬는다. 영어 원문은 lang.en.js 를 볼 것.
+  // 11문항은 참가자마다 무작위 순서로, 제목 없이 제시된다.
+  likertLead: '이 연구에서 어시스턴트를 사용해 본 경험을 바탕으로, 다음 각 문장에 '
+              + '얼마나 동의하십니까?',
+  likertLo: '전혀 동의하지 않음',
+  likertHi: '매우 동의함',
+  likertItems: [
+    ['t1', '이 어시스턴트는 믿을 만하다고 생각한다.'],
+    ['t2', '이 어시스턴트는 의지할 만하다고 생각한다.'],
+    ['t3', '이 어시스턴트에 의존하면서 안심이 되었다.'],
+    ['t4', '이 어시스턴트에 의존하면서 확신이 있었다.'],
+    ['t5', '이 어시스턴트는 신뢰할 만하다고 느낀다.'],
+    ['t6', '나는 이 어시스턴트를 신뢰한다.'],
+    ['d1', '이 어시스턴트는 수상해 보였다.'],
+    ['d2', '나는 이 어시스턴트를 불신했다.'],
+    ['d3', '이 어시스턴트에 대해 회의적이었다(즉, 의심이 들었다).'],
+    ['d4', '이 어시스턴트를 쓸 때 매우 경계하고 조심해야 한다고 느꼈다.'],
+    ['d5', '이 어시스턴트에 의존하는 것이 두려웠다.']
+  ],
   postBody: function () {
     return (
     '<h1>마지막 몇 가지 질문</h1>' +
     '<div class="card">' +
-    '<p class="q">전반적으로 어시스턴트를 얼마나 신뢰하셨습니까?</p>' +
-    scale('trust', '전혀 아니다', '전적으로 신뢰했다', 7) +
+    '<p class="q">' + T.likertLead + '</p>' +
+    likert(T.likertItems, T.likertLo, T.likertHi) +
+    '</div>' +
+    '<div class="card">' +
     '<p class="q">전반적으로 어시스턴트가 실제로 아는 것보다 더 확신하는 척한다고 얼마나 ' +
     '의심하셨습니까?</p>' +
-    scale('distrust', '전혀 아니다', '매우 그랬다', 7) +
+    scale('exag', '전혀 아니다', '매우 그랬다', 7) +
     '<p class="q">전반적으로 어시스턴트의 답을 그대로 받아들이기보다 발췌문을 직접 얼마나 ' +
     '꼼꼼히 확인하셨습니까?</p>' +
     scale('verify', '전혀 아니다', '매우 꼼꼼히', 7) +
@@ -628,8 +651,10 @@ function postPerson(done) {
     row['practice_' + (i + 1) + '_answer'] = p.answer;
     row['practice_' + (i + 1) + '_seconds'] = p.seconds;
   });
-  ['trust', 'distrust', 'verify_intent', 'perceived_accuracy',
-   'perceived_confidence',
+  ['trust_1', 'trust_2', 'trust_3', 'trust_4', 'trust_5', 'trust_6',
+   'distrust_1', 'distrust_2', 'distrust_3', 'distrust_4', 'distrust_5',
+   'scale_order', 'perceived_exaggeration',
+   'verify_intent', 'perceived_accuracy', 'perceived_confidence',
    'numeracy', 'ai_familiarity', 'attention_check',
    'age', 'gender'].forEach(function (k) {
     row[k] = S.post[k];
@@ -720,6 +745,29 @@ function choices(name, opts) {
   }
   return out + '</div>';
 }
+// A block of agree-disagree statements sharing one 7-point scale. The order is
+// shuffled once per participant and recorded, so an order effect can be
+// checked rather than assumed away, and the two scales are interleaved without
+// headings so the respondent is not told which statements belong together.
+var LIKERT_ORDER = null;
+function likert(items, lo, hi) {
+  if (!LIKERT_ORDER) {
+    var ids = items.map(function (it) { return it[0]; });
+    for (var i = ids.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = ids[i]; ids[i] = ids[j]; ids[j] = tmp;
+    }
+    LIKERT_ORDER = ids;
+  }
+  var byId = {};
+  items.forEach(function (it) { byId[it[0]] = it[1]; });
+  var out = '';
+  LIKERT_ORDER.forEach(function (id) {
+    out += '<p class="q lk">' + esc(byId[id]) + '</p>' + scale(id, lo, hi, 7);
+  });
+  return out;
+}
+
 function picked(name) {
   var el = document.querySelector('input[name="' + name + '"]:checked');
   return el ? el.value : '';
@@ -887,9 +935,14 @@ function screenPost() {
   };
   $('go').onclick = function () {
     var age = $('age').value.trim();
-    var t = picked('trust'), d = picked('distrust'), v = picked('verify'),
+    var v = picked('verify'), x = picked('exag'),
         f = picked('fam'), a = picked('att'), g = picked('gender');
-    if (!t || !d || !v || !f || !a || !g ||
+    var lk = {}, lkMissing = false;
+    T.likertItems.forEach(function (it) {
+      lk[it[0]] = picked(it[0]);
+      if (!lk[it[0]]) { lkMissing = true; }
+    });
+    if (lkMissing || !v || !x || !f || !a || !g ||
         $('pa').value.trim() === '' || $('pc').value.trim() === '' ||
         $('num').value.trim() === '') {
       $('e').textContent = T.errAnswerAll; return;
@@ -910,11 +963,18 @@ function screenPost() {
          Number(age) < 18 || Number(age) > 99)) {
       $('e').textContent = T.errAge; return;
     }
-    S.post = {trust: t, distrust: d, verify_intent: v,
+    S.post = {verify_intent: v, perceived_exaggeration: x,
               perceived_accuracy: pa,
               perceived_confidence: pc, numeracy: num,
               ai_familiarity: f, attention_check: a,
-              age: ageDeclined ? DECLINED : Number(age), gender: g};
+              age: ageDeclined ? DECLINED : Number(age), gender: g,
+              scale_order: LIKERT_ORDER.join(' ')};
+    // One column per statement, named by scale and position in the source
+    // (t1..t6, d1..d5), never by the position shown, which scale_order keeps.
+    T.likertItems.forEach(function (it) {
+      var id = it[0];
+      S.post[(id[0] === 't' ? 'trust_' : 'distrust_') + id.slice(1)] = lk[id];
+    });
     S.stage = 'debrief'; save(); screenDebrief();
   };
 }

@@ -66,6 +66,7 @@
   .choices .choice:has(input:checked) { border-color: var(--accent);
                  background: #eaf1f8; }
   .q { margin: 18px 0 6px; font-weight: 600; }
+  .q.lk { margin-top: 14px; font-weight: 500; }
   .saving { position: fixed; right: 12px; bottom: 12px; font-size: 12px;
             color: var(--dim); }
   .hidden { display: none !important; }
@@ -149,12 +150,12 @@ var T = {
     '<b>final answer</b>. The excerpt is collapsed but you can re-open it at ' +
     'any time with one button. No calculation is required — every answer ' +
     'is a number printed in the excerpt.<br>' +
-    '4) After the ten items you answer <b>10 short closing questions</b>: ' +
-    'how much you trusted the ' +
-    'assistant, whether you suspected it of claiming more certainty than it ' +
-    'had, how closely you checked the excerpt, how many items you think it got ' +
-    'right, one probability question, how often you use AI assistants, and ' +
-    '<b>your age and gender</b>.<br>' +
+    '4) After the ten items you answer <b>a short questionnaire of about 20 ' +
+    'questions</b>: eleven statements about how much you trusted or ' +
+    'distrusted the assistant, whether you suspected it of claiming more ' +
+    'certainty than it had, how closely you checked the excerpt, how many ' +
+    'items you think it got right, one probability question, how often you ' +
+    'use AI assistants, and <b>your age and gender</b>.<br>' +
     '5) A <b>final page explaining more about the study</b> is shown. Please ' +
     'read it.</p>' +
     '<p>We record your answers, the time you spend on each screen, whether ' +
@@ -339,15 +340,44 @@ var T = {
   finalAnswerLabel: 'Your final answer',
 
   // ---- post-block measures ------------------------------------------------
+  // Trust and distrust are measured as two separate multi-item scales, adapted
+  // from Ou and Sia (2010, Int. J. Human-Computer Studies 68(12), 913-934,
+  // Appendix A). Their distrust items were generated from Lewicki et al.'s
+  // conceptualisation and their trust items from Pavlou and Gefen; the two sets
+  // share no vocabulary, so distrust is not a reverse-scored copy of trust.
+  // Adaptation: the referent "BuyDig" becomes "the assistant"; DTE2 "seems
+  // distrustful" is restated as "I felt distrustful of", since the original
+  // predicates distrust of the vendor rather than of the respondent. The eleven
+  // items are shown in a random order per participant, without headings, so
+  // that neither scale is labelled for the respondent.
+  likertLead: 'Based on your experience with the assistant in this study, how '
+              + 'much do you agree with each statement?',
+  likertLo: 'strongly disagree',
+  likertHi: 'strongly agree',
+  likertItems: [
+    ['t1', 'I think the assistant is reliable.'],
+    ['t2', 'I think the assistant is dependable.'],
+    ['t3', 'I felt assured relying on the assistant.'],
+    ['t4', 'I felt confident relying on the assistant.'],
+    ['t5', 'I feel the assistant is trustworthy.'],
+    ['t6', 'I have faith in the assistant.'],
+    ['d1', 'The assistant seemed suspicious.'],
+    ['d2', 'I felt distrustful of the assistant.'],
+    ['d3', 'I felt skeptical (that is, I had doubts) about the assistant.'],
+    ['d4', 'I felt I had to be very watchful and wary when using the assistant.'],
+    ['d5', 'I was fearful of relying on the assistant.']
+  ],
   postBody: function () {
     return (
 '<h1>A few final questions</h1>' +
     '<div class="card">' +
-    '<p class="q">Overall, how much did you trust the assistant?</p>' +
-    scale('trust', 'not at all', 'completely', 7) +
+    '<p class="q">' + T.likertLead + '</p>' +
+    likert(T.likertItems, T.likertLo, T.likertHi) +
+    '</div>' +
+    '<div class="card">' +
     '<p class="q">Overall, how much did you suspect the assistant of claiming ' +
     'more certainty than it had?</p>' +
-    scale('distrust', 'not at all', 'extremely', 7) +
+    scale('exag', 'not at all', 'extremely', 7) +
     '<p class="q">Overall, how closely did you check the excerpt yourself ' +
     'rather than take the assistant\u2019s answer?</p>' +
     scale('verify', 'not at all', 'very closely', 7) +
@@ -673,8 +703,10 @@ function postPerson(done) {
     row['practice_' + (i + 1) + '_answer'] = p.answer;
     row['practice_' + (i + 1) + '_seconds'] = p.seconds;
   });
-  ['trust', 'distrust', 'verify_intent', 'perceived_accuracy',
-   'perceived_confidence',
+  ['trust_1', 'trust_2', 'trust_3', 'trust_4', 'trust_5', 'trust_6',
+   'distrust_1', 'distrust_2', 'distrust_3', 'distrust_4', 'distrust_5',
+   'scale_order', 'perceived_exaggeration',
+   'verify_intent', 'perceived_accuracy', 'perceived_confidence',
    'numeracy', 'ai_familiarity', 'attention_check',
    'age', 'gender'].forEach(function (k) {
     row[k] = S.post[k];
@@ -765,6 +797,29 @@ function choices(name, opts) {
   }
   return out + '</div>';
 }
+// A block of agree-disagree statements sharing one 7-point scale. The order is
+// shuffled once per participant and recorded, so an order effect can be
+// checked rather than assumed away, and the two scales are interleaved without
+// headings so the respondent is not told which statements belong together.
+var LIKERT_ORDER = null;
+function likert(items, lo, hi) {
+  if (!LIKERT_ORDER) {
+    var ids = items.map(function (it) { return it[0]; });
+    for (var i = ids.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = ids[i]; ids[i] = ids[j]; ids[j] = tmp;
+    }
+    LIKERT_ORDER = ids;
+  }
+  var byId = {};
+  items.forEach(function (it) { byId[it[0]] = it[1]; });
+  var out = '';
+  LIKERT_ORDER.forEach(function (id) {
+    out += '<p class="q lk">' + esc(byId[id]) + '</p>' + scale(id, lo, hi, 7);
+  });
+  return out;
+}
+
 function picked(name) {
   var el = document.querySelector('input[name="' + name + '"]:checked');
   return el ? el.value : '';
@@ -932,9 +987,14 @@ function screenPost() {
   };
   $('go').onclick = function () {
     var age = $('age').value.trim();
-    var t = picked('trust'), d = picked('distrust'), v = picked('verify'),
+    var v = picked('verify'), x = picked('exag'),
         f = picked('fam'), a = picked('att'), g = picked('gender');
-    if (!t || !d || !v || !f || !a || !g ||
+    var lk = {}, lkMissing = false;
+    T.likertItems.forEach(function (it) {
+      lk[it[0]] = picked(it[0]);
+      if (!lk[it[0]]) { lkMissing = true; }
+    });
+    if (lkMissing || !v || !x || !f || !a || !g ||
         $('pa').value.trim() === '' || $('pc').value.trim() === '' ||
         $('num').value.trim() === '') {
       $('e').textContent = T.errAnswerAll; return;
@@ -955,11 +1015,18 @@ function screenPost() {
          Number(age) < 18 || Number(age) > 99)) {
       $('e').textContent = T.errAge; return;
     }
-    S.post = {trust: t, distrust: d, verify_intent: v,
+    S.post = {verify_intent: v, perceived_exaggeration: x,
               perceived_accuracy: pa,
               perceived_confidence: pc, numeracy: num,
               ai_familiarity: f, attention_check: a,
-              age: ageDeclined ? DECLINED : Number(age), gender: g};
+              age: ageDeclined ? DECLINED : Number(age), gender: g,
+              scale_order: LIKERT_ORDER.join(' ')};
+    // One column per statement, named by scale and position in the source
+    // (t1..t6, d1..d5), never by the position shown, which scale_order keeps.
+    T.likertItems.forEach(function (it) {
+      var id = it[0];
+      S.post[(id[0] === 't' ? 'trust_' : 'distrust_') + id.slice(1)] = lk[id];
+    });
     S.stage = 'debrief'; save(); screenDebrief();
   };
 }
